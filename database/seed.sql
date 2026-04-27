@@ -25,7 +25,7 @@ INSERT INTO supplier (name, contact_person, phone, email, address) VALUES
 -- =========================
 INSERT INTO users (full_name, username, password_hash, role, status) VALUES
 ('Allieza Marie B. Segales', 'allieza_admin', 'hehehe01_', 'admin', 'active'),
-('LB P. Mira', 'lb_cashier', 'hihihi02_', 'cashier', 'active'),
+('LB P. Mira', 'lb_staff', 'hihihi02_', 'cashier', 'active'),
 ('Jaina Marie C. Asumbrado', 'jaina_inventory', 'hahaha03_', 'inventory', 'active'),
 ('Angel Mig G. Fucoy', 'mig_staff', 'huhuhu04_', 'cashier', 'active');
 
