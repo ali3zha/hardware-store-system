@@ -24,9 +24,10 @@ INSERT INTO supplier (name, contact_person, phone, email, address) VALUES
 -- Replace later with real hashed passwords from backend.
 -- =========================
 INSERT INTO users (full_name, username, password_hash, role, status) VALUES
-('System Admin', 'admin', '$2b$10$adminplaceholderhash', 'admin', 'active'),
-('Maria Santos', 'cashier1', '$2b$10$cashierplaceholderhash', 'cashier', 'active'),
-('Leo Mendoza', 'inventory1', '$2b$10$inventoryplaceholderhash', 'inventory_staff', 'active');
+('Allieza Marie B. Segales', 'allieza_admin', 'hehehe01_', 'admin', 'active'),
+('LB P. Mira', 'lb_cashier', 'hihihi02_', 'cashier', 'active'),
+('Jaina Marie C. Asumbrado', 'jaina_inventory', 'hahaha03_', 'inventory', 'active'),
+('Angel Mig G. Fucoy', 'mig_staff', 'huhuhu04_', 'cashier', 'active');
 
 -- =========================
 -- 4) CUSTOMER
