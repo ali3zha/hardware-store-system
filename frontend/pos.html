@@ -15,8 +15,6 @@
       <li><a href="./index.html"><i class="fas fa-home"></i> Dashboard</a></li>
       <li><a href="./pos.html" class="active"><i class="fas fa-cash-register"></i> Go to POS</a></li>
       <li><a href="./product.html"><i class="fas fa-tools"></i> Manage Products</a></li>
-          <li><a href="./category.html"><i class="fas fa-layer-group"></i> Category</a></li>
-
       <li><a href="./transactions.html"><i class="fas fa-receipt"></i> View Transactions</a></li>
       <li><a href="./stock-movements.html"><i class="fas fa-right-left"></i> View Stock Movements</a></li>
       <li><a href="./login.html" id="logoutLink"><i class="fas fa-right-from-bracket"></i> Logout</a></li>
@@ -26,13 +24,12 @@
   <div class="main">
     <div class="header">
       <div>
-        <h1>POS Terminal</h1>
+        <h1>POS</h1>
         <p>Checkout and create a sale.</p>
       </div>
     </div>
 
     <div class="pos-grid">
-      <!-- PRODUCTS -->
       <section class="panel">
         <div class="panel-header">
           <h3>Products</h3>
@@ -54,7 +51,6 @@
         </table>
       </section>
 
-      <!-- CART -->
       <section class="panel">
         <div class="panel-header">
           <h3>Cart</h3>
@@ -103,10 +99,11 @@
     </div>
   </div>
 
-  <script src="./js/auth.js"></script>
   <script>
-    Auth.requireAuth();
-    Auth.attachLogout("logoutLink");
+    document.getElementById("logoutLink")?.addEventListener("click", () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    });
   </script>
   <script src="./js/pos.js"></script>
 </body>
