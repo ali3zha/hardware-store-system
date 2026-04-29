@@ -1,188 +1,93 @@
-(() => {
-  const STORAGE_KEY = "hardwareStoreCustomers";
+const customerTableBody = document.getElementById("customerTableBody");
+const customerMsg = document.getElementById("customerMsg");
+const searchInput = document.getElementById("searchInput");
+const reloadBtn = document.getElementById("reloadBtn");
+const fullNameEl = document.getElementById("fullName");
+const phoneEl = document.getElementById("phone");
+const emailEl = document.getElementById("email");
+const addCustomerBtn = document.getElementById("addCustomerBtn");
+const logoutLink = document.getElementById("logoutLink");
 
-  const form = document.getElementById("customerForm");
-  const customerIdInput = document.getElementById("customerId");
-  const fullNameInput = document.getElementById("fullName");
-  const phoneInput = document.getElementById("phone");
-  const emailInput = document.getElementById("email");
-  const addressInput = document.getElementById("address");
-  const submitBtn = document.getElementById("submitBtn");
-  const clearBtn = document.getElementById("clearBtn");
-  const formTitle = document.getElementById("formTitle");
-  const tableBody = document.getElementById("customerTableBody");
-  const searchInput = document.getElementById("searchInput");
-  const emptyState = document.getElementById("emptyState");
-  const message = document.getElementById("message");
+let allCustomers = [];
 
-  // Exit quietly if this script is loaded outside customer page.
-  if (
-    !form ||
-    !customerIdInput ||
-    !fullNameInput ||
-    !phoneInput ||
-    !emailInput ||
-    !addressInput ||
-    !submitBtn ||
-    !clearBtn ||
-    !formTitle ||
-    !tableBody ||
-    !searchInput ||
-    !emptyState ||
-    !message
-  ) {
+logoutLink?.addEventListener("click", () => {
+  window.API.clearAuth();
+});
+
+function renderRows(rows) {
+  customerTableBody.innerHTML = "";
+
+  if (!rows.length) {
+    customerTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No customers found.</td></tr>`;
     return;
   }
 
-  let customers = loadCustomers();
-  let searchText = "";
-
-  renderCustomers();
-
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const customerData = {
-      id: customerIdInput.value || crypto.randomUUID(),
-      fullName: fullNameInput.value.trim(),
-      phone: phoneInput.value.trim(),
-      email: emailInput.value.trim(),
-      address: addressInput.value.trim()
-    };
-
-    if (!customerData.fullName || !customerData.phone || !customerData.email || !customerData.address) {
-      showMessage("Please complete all fields.", true);
-      return;
-    }
-
-    if (!isValidEmail(customerData.email)) {
-      showMessage("Please enter a valid email address.", true);
-      return;
-    }
-
-    if (customerIdInput.value) {
-      customers = customers.map((customer) =>
-        customer.id === customerData.id ? customerData : customer
-      );
-      showMessage("Customer updated successfully.");
-    } else {
-      customers.push(customerData);
-      showMessage("Customer added successfully.");
-    }
-
-    saveCustomers(customers);
-    resetForm();
-    renderCustomers();
+  rows.forEach((c) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${c.full_name || ""}</td>
+      <td>${c.phone || ""}</td>
+      <td>${c.email || ""}</td>
+      <td>${Number(c.loyalty_points || 0)}</td>
+    `;
+    customerTableBody.appendChild(tr);
   });
+}
 
-  clearBtn.addEventListener("click", () => {
-    resetForm();
-    showMessage("");
-  });
+function applySearch() {
+  const q = searchInput.value.trim().toLowerCase();
+  if (!q) return renderRows(allCustomers);
 
-  searchInput.addEventListener("input", (event) => {
-    searchText = event.target.value.toLowerCase().trim();
-    renderCustomers();
-  });
+  const filtered = allCustomers.filter((c) =>
+    (c.full_name || "").toLowerCase().includes(q) ||
+    (c.phone || "").toLowerCase().includes(q)
+  );
 
-  tableBody.addEventListener("click", (event) => {
-    const target = event.target;
-    if (!(target instanceof HTMLElement)) return;
+  renderRows(filtered);
+}
 
-    const action = target.dataset.action;
-    const id = target.dataset.id;
-    if (!action || !id) return;
+async function loadCustomers() {
+  customerMsg.textContent = "Loading customers...";
+  customerMsg.style.color = "#64748b";
 
-    const selectedCustomer = customers.find((customer) => customer.id === id);
-    if (!selectedCustomer) return;
+  try {
+    const res = await window.API.get("/customers");
+    allCustomers = Array.isArray(res.data) ? res.data : [];
+    renderRows(allCustomers);
+    customerMsg.textContent = `Loaded ${allCustomers.length} customer(s).`;
+  } catch (err) {
+    customerMsg.style.color = "#dc2626";
+    customerMsg.textContent = err.message;
+  }
+}
 
-    if (action === "edit") {
-      customerIdInput.value = selectedCustomer.id;
-      fullNameInput.value = selectedCustomer.fullName;
-      phoneInput.value = selectedCustomer.phone;
-      emailInput.value = selectedCustomer.email;
-      addressInput.value = selectedCustomer.address;
-      formTitle.textContent = "Edit Customer";
-      submitBtn.textContent = "Update Customer";
-      fullNameInput.focus();
-      showMessage("");
-    }
+async function addCustomer() {
+  const full_name = fullNameEl.value.trim();
+  const phone = phoneEl.value.trim();
+  const email = emailEl.value.trim();
 
-    if (action === "delete") {
-      const shouldDelete = confirm(`Delete customer "${selectedCustomer.fullName}"?`);
-      if (!shouldDelete) return;
-
-      customers = customers.filter((customer) => customer.id !== id);
-      saveCustomers(customers);
-      renderCustomers();
-      showMessage("Customer deleted successfully.");
-
-      if (customerIdInput.value === id) {
-        resetForm();
-      }
-    }
-  });
-
-  function renderCustomers() {
-    tableBody.innerHTML = "";
-
-    const filtered = customers.filter((customer) => {
-      const target = `${customer.fullName} ${customer.phone} ${customer.email} ${customer.address}`.toLowerCase();
-      return target.includes(searchText);
-    });
-
-    filtered.forEach((customer) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${escapeHtml(customer.fullName)}</td>
-        <td>${escapeHtml(customer.phone)}</td>
-        <td>${escapeHtml(customer.email)}</td>
-        <td>${escapeHtml(customer.address)}</td>
-        <td>
-          <div class="row-actions">
-            <button type="button" data-action="edit" data-id="${customer.id}" class="secondary">Edit</button>
-            <button type="button" data-action="delete" data-id="${customer.id}" class="danger">Delete</button>
-          </div>
-        </td>
-      `;
-      tableBody.appendChild(row);
-    });
-
-    emptyState.style.display = filtered.length ? "none" : "block";
+  if (!full_name || !phone) {
+    customerMsg.style.color = "#dc2626";
+    customerMsg.textContent = "Full name and phone are required.";
+    return;
   }
 
-  function resetForm() {
-    form.reset();
-    customerIdInput.value = "";
-    formTitle.textContent = "Add Customer";
-    submitBtn.textContent = "Save Customer";
+  try {
+    await window.API.post("/customers", { full_name, phone, email });
+    customerMsg.style.color = "#15803d";
+    customerMsg.textContent = "Customer added successfully.";
+    fullNameEl.value = "";
+    phoneEl.value = "";
+    emailEl.value = "";
+    await loadCustomers();
+  } catch (err) {
+    customerMsg.style.color = "#dc2626";
+    customerMsg.textContent = err.message;
   }
+}
 
-  function loadCustomers() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  }
+searchInput.addEventListener("input", applySearch);
+reloadBtn.addEventListener("click", loadCustomers);
+addCustomerBtn.addEventListener("click", addCustomer);
 
-  function saveCustomers(items) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }
-
-  function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
-
-  function showMessage(text, isError = false) {
-    message.textContent = text;
-    message.style.color = isError ? "#dc2626" : "#16a34a";
-  }
-
-  function escapeHtml(text) {
-    const div = document.createElement("div");
-    div.textContent = String(text ?? "");
-    return div.innerHTML;
-  }
-})();
+loadCustomers();

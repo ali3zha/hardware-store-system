@@ -3,296 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hardware Store - Customers</title>
+  <title>NAILed IT | Customers</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="./css/style.css" />
   <link rel="stylesheet" href="./css/fe2.css" />
-  <style>
-    .page-grid {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 16px;
-    }
-
-    .search-wrap {
-      margin-bottom: 10px;
-    }
-
-    .hint {
-      color: #64748b;
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-
-    @media (max-width: 920px) {
-      .page-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Customer Management</h1>
-
-    <div class="page-grid">
-      <section class="card">
-        <h2>Customer List</h2>
-        <div class="search-wrap">
-          <input id="searchInput" class="search" type="text" placeholder="Search by name or phone..." />
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Loyalty Points</th>
-              </tr>
-            </thead>
-            <tbody id="customerTableBody"></tbody>
-          </table>
-        </div>
-        <p id="emptyState" class="empty">Loading customers...</p>
-      </section>
-
-      <section class="card">
-        <h2>Add Customer (Optional)</h2>
-        <p class="hint">If API is unavailable, this form saves locally (static UI fallback).</p>
-
-        <form id="customerForm">
-          <div class="field">
-            <label for="nameInput">Name</label>
-            <input id="nameInput" type="text" placeholder="Full name" required />
-          </div>
-
-          <div class="field">
-            <label for="phoneInput">Phone</label>
-            <input id="phoneInput" type="text" placeholder="09xxxxxxxxx" required />
-          </div>
-
-          <div class="field">
-            <label for="emailInput">Email</label>
-            <input id="emailInput" type="email" placeholder="customer@email.com" required />
-          </div>
-
-          <div class="field">
-            <label for="pointsInput">Loyalty Points</label>
-            <input id="pointsInput" type="number" min="0" value="0" />
-          </div>
-
-          <div class="actions">
-            <button class="btn" type="submit">Add Customer</button>
-            <button class="btn btn-secondary" id="resetBtn" type="button">Reset</button>
-          </div>
-        </form>
-
-        <p id="statusText" class="status"></p>
-      </section>
-    </div>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>NAILED<span>IT</span></h2>
+    <ul>
+      <li><a href="./index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+      <li><a href="./pos.html"><i class="fas fa-cash-register"></i> Go to POS</a></li>
+      <li><a href="./product.html"><i class="fas fa-tools"></i> Manage Products</a></li>
+      <li><a href="./transactions.html"><i class="fas fa-receipt"></i> View Transactions</a></li>
+      <li><a href="./stock-movements.html"><i class="fas fa-right-left"></i> View Stock Movements</a></li>
+      <li><a href="./customer.html" class="active"><i class="fas fa-users"></i> Customers</a></li>
+      <li><a href="./login.html" id="logoutLink"><i class="fas fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
   </div>
 
-  <script>
-    const API_CUSTOMERS = "/api/customers";
-    const LOCAL_KEY = "staticCustomersFallback";
+  <!-- Main -->
+  <div class="main">
+    <div class="header">
+      <div>
+        <h1>Customers</h1>
+        <p>Manage customer profiles and loyalty points.</p>
+      </div>
+    </div>
 
-    const customerTableBody = document.getElementById("customerTableBody");
-    const emptyState = document.getElementById("emptyState");
-    const searchInput = document.getElementById("searchInput");
-    const customerForm = document.getElementById("customerForm");
-    const nameInput = document.getElementById("nameInput");
-    const phoneInput = document.getElementById("phoneInput");
-    const emailInput = document.getElementById("emailInput");
-    const pointsInput = document.getElementById("pointsInput");
-    const resetBtn = document.getElementById("resetBtn");
-    const statusText = document.getElementById("statusText");
+    <section class="table-section customer-section">
+      <div class="table-header customer-header">
+        <h3>Customer List</h3>
 
-    let customers = [];
-    let filteredCustomers = [];
-    let endpointAvailable = true;
+        <div class="customer-controls">
+          <input type="text" id="searchInput" placeholder="Search by name or phone..." />
+          <button class="view-link" id="reloadBtn" type="button">Reload</button>
+        </div>
+      </div>
 
-    init();
+      <!-- Optional Add Form -->
+      <div class="customer-form-wrap">
+        <h4>Add Customer</h4>
+        <div class="customer-form-grid">
+          <input type="text" id="fullName" placeholder="Full Name" />
+          <input type="text" id="phone" placeholder="Phone Number" />
+          <input type="email" id="email" placeholder="Email Address" />
+          <button class="view-link" id="addCustomerBtn" type="button">Add Customer</button>
+        </div>
+      </div>
 
-    async function init() {
-      await loadCustomers();
-      applySearch("");
-    }
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Loyalty Points</th>
+          </tr>
+        </thead>
+        <tbody id="customerTableBody"></tbody>
+      </table>
 
-    async function loadCustomers() {
-      setStatus("Loading customers...", false);
-      customerTableBody.innerHTML = "";
-      emptyState.style.display = "block";
-      emptyState.textContent = "Loading customers...";
+      <p id="customerMsg" class="tx-message"></p>
+    </section>
+  </div>
 
-      try {
-        const response = await fetch(API_CUSTOMERS);
-        if (!response.ok) throw new Error(`GET failed (${response.status})`);
-
-        const data = await response.json();
-        customers = normalizeCustomers(Array.isArray(data) ? data : []);
-        endpointAvailable = true;
-        setStatus("Customers loaded from API.", false);
-      } catch (error) {
-        console.warn("API unavailable, using static fallback.", error);
-        endpointAvailable = false;
-        customers = loadLocalFallback();
-        if (!customers.length) {
-          customers = getInitialStaticCustomers();
-          saveLocalFallback(customers);
-        }
-        setStatus("API unavailable. Using static fallback data.", true);
-      }
-
-      filteredCustomers = [...customers];
-      renderTable();
-    }
-
-    searchInput.addEventListener("input", (event) => {
-      applySearch(event.target.value || "");
-    });
-
-    customerForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      const payload = {
-        name: nameInput.value.trim(),
-        phone: phoneInput.value.trim(),
-        email: emailInput.value.trim(),
-        loyalty_points: Math.max(0, Number(pointsInput.value || 0))
-      };
-
-      if (!payload.name || !payload.phone || !payload.email) {
-        setStatus("Please complete name, phone, and email.", true);
-        return;
-      }
-
-      if (!isValidEmail(payload.email)) {
-        setStatus("Please enter a valid email address.", true);
-        return;
-      }
-
-      if (endpointAvailable) {
-        try {
-          setStatus("Saving customer to API...", false);
-          const response = await fetch(API_CUSTOMERS, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-
-          if (!response.ok) throw new Error(`POST failed (${response.status})`);
-          const created = await response.json().catch(() => payload);
-
-          customers.unshift(normalizeCustomer(created));
-          setStatus("Customer added via API.", false);
-        } catch (error) {
-          console.warn("POST API failed, fallback to local.", error);
-          endpointAvailable = false;
-          const localItem = { ...payload, id: crypto.randomUUID() };
-          customers.unshift(localItem);
-          saveLocalFallback(customers);
-          setStatus("API save failed. Saved locally instead.", true);
-        }
-      } else {
-        const localItem = { ...payload, id: crypto.randomUUID() };
-        customers.unshift(localItem);
-        saveLocalFallback(customers);
-        setStatus("Customer saved locally.", false);
-      }
-
-      customerForm.reset();
-      pointsInput.value = "0";
-      applySearch(searchInput.value || "");
-    });
-
-    resetBtn.addEventListener("click", () => {
-      customerForm.reset();
-      pointsInput.value = "0";
-      setStatus("", false);
-    });
-
-    function applySearch(keyword) {
-      const q = String(keyword).toLowerCase().trim();
-      filteredCustomers = customers.filter((customer) => {
-        const target = `${customer.name} ${customer.phone}`.toLowerCase();
-        return target.includes(q);
-      });
-      renderTable();
-    }
-
-    function renderTable() {
-      customerTableBody.innerHTML = "";
-
-      if (!filteredCustomers.length) {
-        emptyState.style.display = "block";
-        emptyState.textContent = "No customers found.";
-        return;
-      }
-
-      emptyState.style.display = "none";
-
-      filteredCustomers.forEach((customer) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${escapeHtml(customer.name)}</td>
-          <td>${escapeHtml(customer.phone)}</td>
-          <td>${escapeHtml(customer.email)}</td>
-          <td>${Number(customer.loyalty_points || 0)}</td>
-        `;
-        customerTableBody.appendChild(row);
-      });
-    }
-
-    function normalizeCustomers(list) {
-      return list.map(normalizeCustomer);
-    }
-
-    function normalizeCustomer(item) {
-      return {
-        id: item.id ?? item.customer_id ?? crypto.randomUUID(),
-        name: item.name ?? item.full_name ?? "Unknown",
-        phone: item.phone ?? "",
-        email: item.email ?? "",
-        loyalty_points: Number(item.loyalty_points ?? item.points ?? 0)
-      };
-    }
-
-    function getInitialStaticCustomers() {
-      return [
-        { id: "c1", name: "Juan Dela Cruz", phone: "09171234567", email: "juan@example.com", loyalty_points: 120 },
-        { id: "c2", name: "Maria Santos", phone: "09181239876", email: "maria@example.com", loyalty_points: 85 },
-        { id: "c3", name: "Pedro Reyes", phone: "09991234567", email: "pedro@example.com", loyalty_points: 30 }
-      ];
-    }
-
-    function loadLocalFallback() {
-      try {
-        const raw = localStorage.getItem(LOCAL_KEY);
-        const parsed = raw ? JSON.parse(raw) : [];
-        return Array.isArray(parsed) ? normalizeCustomers(parsed) : [];
-      } catch {
-        return [];
-      }
-    }
-
-    function saveLocalFallback(data) {
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
-    }
-
-    function isValidEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    function setStatus(message, isError) {
-      statusText.textContent = message;
-      statusText.className = `status ${isError ? "err" : "ok"}`;
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement("div");
-      div.textContent = String(text ?? "");
-      return div.innerHTML;
-    }
-  </script>
+  <script src="./js/api.js"></script>
+  <script src="./js/customer.js"></script>
 </body>
 </html>

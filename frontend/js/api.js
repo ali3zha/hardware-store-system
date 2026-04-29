@@ -1,4 +1,3 @@
-// frontend/js/api.js
 const API_BASE = "http://localhost:5000/api";
 
 function getToken() {
@@ -11,16 +10,9 @@ function clearAuth() {
 }
 
 function buildHeaders(extra = {}) {
-  const headers = {
-    "Content-Type": "application/json",
-    ...extra,
-  };
-
+  const headers = { "Content-Type": "application/json", ...extra };
   const token = getToken();
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
+  if (token) headers.Authorization = `Bearer ${token}`;
   return headers;
 }
 
@@ -33,39 +25,15 @@ async function apiFetch(path, options = {}) {
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok || data.success === false) {
-    const errMsg = data.message || `Request failed (${res.status})`;
-    throw new Error(errMsg);
+    throw new Error(data.message || `Request failed (${res.status})`);
   }
 
   return data;
 }
 
-// helper methods
-async function apiGet(path) {
-  return apiFetch(path, { method: "GET" });
-}
-
-async function apiPost(path, body) {
-  return apiFetch(path, {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
-}
-
-async function apiPut(path, body) {
-  return apiFetch(path, {
-    method: "PUT",
-    body: JSON.stringify(body),
-  });
-}
-
-// expose globally for plain script usage
 window.API = {
-  API_BASE,
-  getToken,
+  get: (path) => apiFetch(path, { method: "GET" }),
+  post: (path, body) => apiFetch(path, { method: "POST", body: JSON.stringify(body) }),
+  put: (path, body) => apiFetch(path, { method: "PUT", body: JSON.stringify(body) }),
   clearAuth,
-  apiFetch,
-  get: apiGet,
-  post: apiPost,
-  put: apiPut,
 };
