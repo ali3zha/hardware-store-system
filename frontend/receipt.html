@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Receipt</title>
+  <link rel="stylesheet" href="./css/fe2.css" />
+  <style>
+    body {
+      background: #f2f5fb;
+      padding: 20px;
+    }
+
+    .receipt-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .receipt-paper {
+      background: #fff;
+      border: 1px solid #dbe4f0;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      padding: 20px;
+    }
+
+    .head {
+      text-align: center;
+      margin-bottom: 12px;
+      border-bottom: 1px dashed #cdd8ea;
+      padding-bottom: 10px;
+    }
+
+    .head h1 {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .muted {
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .meta .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 14px;
+      padding: 8px 10px;
+      background: #f8faff;
+      border: 1px solid #e3ebf8;
+      border-radius: 8px;
+    }
+
+    .summary {
+      margin-top: 12px;
+      border-top: 1px dashed #cdd8ea;
+      padding-top: 10px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .summary-row.grand {
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #64748b;
+      padding: 30px 10px;
+      border: 1px dashed #cdd8ea;
+      border-radius: 10px;
+      background: #fafcff;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+
+      .actions {
+        display: none !important;
+      }
+
+      .receipt-paper {
+        border: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="receipt-wrap">
+    <div class="receipt-paper" id="receiptContainer">
+      <div class="head">
+        <h1>Hardware Store Receipt</h1>
+        <p class="muted">Official Sales Receipt</p>
+      </div>
+
+      <div id="receiptContent"></div>
+
+      <div class="actions">
+        <button id="printBtn" class="btn" type="button">Print</button>
+        <a href="./pos.html" class="btn btn-secondary" style="text-decoration: none;">Back to POS</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const receiptContent = document.getElementById("receiptContent");
+    const printBtn = document.getElementById("printBtn");
+
+    // Preferred keys where POS can save checkout response.
+    const RECEIPT_KEYS = ["lastSaleReceipt", "latestSale", "saleReceipt"];
+    const SALES_HISTORY_KEY = "salesHistory";
+
+    const receiptData = loadReceiptData();
+    renderReceipt(receiptData);
+
+    printBtn.addEventListener("click", () => {
+      window.print();
+    });
+
+    function loadReceiptData() {
+      for (const key of RECEIPT_KEYS) {
+        const parsed = parseStorageItem(sessionStorage.getItem(key)) || parseStorageItem(localStorage.getItem(key));
+        if (parsed) return normalizeReceipt(parsed);
+      }
+
+      // Fallback: use latest record from sales history.
+      const history = parseStorageItem(localStorage.getItem(SALES_HISTORY_KEY));
+      if (Array.isArray(history) && history.length > 0) {
+        return normalizeReceipt(history[0]);
+      }
+
+      return null;
+    }
+
+    function normalizeReceipt(raw) {
+      const items = Array.isArray(raw.items) ? raw.items : [];
+
+      const subtotal = toNumber(raw.subtotal);
+      const discount = toNumber(raw.discount);
+      const tax = toNumber(raw.tax);
+      const total = toNumber(raw.total || subtotal - discount + tax);
+      const amountTendered = toNumber(raw.amount_tendered ?? raw.amountTendered ?? raw.payment);
+      const change = toNumber(raw.change || Math.max(0, amountTendered - total));
+
+      return {
+        sale_id: raw.sale_id ?? raw.saleId ?? raw.id ?? "N/A",
+        date_time: raw.date_time ?? raw.datetime ?? raw.created_at ?? raw.date ?? new Date().toLocaleString(),
+        items: items.map((item) => ({
+          product_id: item.product_id ?? item.id ?? "",
+          name: item.name ?? item.product_name ?? "Item",
+          qty: toNumber(item.qty, 1),
+          price: toNumber(item.price)
+        })),
+        subtotal,
+        discount,
+        tax,
+        total,
+        amount_tendered: amountTendered,
+        change
+      };
+    }
+
+    function renderReceipt(data) {
+      if (!data) {
+        receiptContent.innerHTML = `
+          <div class="empty-state">
+            <p>No receipt data found.</p>
+            <p class="muted">Please checkout from POS first, then open this page.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const soldItemsSummary = data.items.length
+        ? data.items
+            .map((item) => {
+              const line = item.qty * item.price;
+              return `
+                <tr>
+                  <td>${escapeHtml(String(item.product_id))}</td>
+                  <td>${escapeHtml(item.name)}</td>
+                  <td>${item.qty}</td>
+                  <td>${money(item.price)}</td>
+                  <td>${money(line)}</td>
+                </tr>
+              `;
+            })
+            .join("")
+        : `
+          <tr>
+            <td colspan="5" class="muted" style="text-align:center;">No sold items.</td>
+          </tr>
+        `;
+
+      receiptContent.innerHTML = `
+        <div class="meta">
+          <div class="row"><span>sale_id</span><strong>${escapeHtml(String(data.sale_id))}</strong></div>
+          <div class="row"><span>date/time</span><strong>${escapeHtml(String(data.date_time))}</strong></div>
+        </div>
+
+        <h3 style="margin-bottom: 8px;">Sold Items Summary</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Product ID</th>
+                <th>Name</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Line Total</th>
+              </tr>
+            </thead>
+            <tbody>${soldItemsSummary}</tbody>
+          </table>
+        </div>
+
+        <div class="summary">
+          <div class="summary-row"><span>Subtotal</span><strong>${money(data.subtotal)}</strong></div>
+          <div class="summary-row"><span>Discount</span><strong>${money(data.discount)}</strong></div>
+          <div class="summary-row"><span>Tax</span><strong>${money(data.tax)}</strong></div>
+          <div class="summary-row grand"><span>Total</span><strong>${money(data.total)}</strong></div>
+          <div class="summary-row"><span>Amount Tendered</span><strong>${money(data.amount_tendered)}</strong></div>
+          <div class="summary-row"><span>Change</span><strong>${money(data.change)}</strong></div>
+        </div>
+      `;
+    }
+
+    function parseStorageItem(value) {
+      if (!value) return null;
+      try {
+        return JSON.parse(value);
+      } catch {
+        return null;
+      }
+    }
+
+    function toNumber(value, fallback = 0) {
+      const num = Number(value);
+      return Number.isFinite(num) ? num : fallback;
+    }
+
+    function money(value) {
+      return `PHP ${toNumber(value).toFixed(2)}`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = String(text ?? "");
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
