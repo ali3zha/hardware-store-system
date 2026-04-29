@@ -1,109 +1,143 @@
-(() => {
-  /**
-   * Discount utility for POS pages.
-   * Exposes helpers via window.DiscountUtils
-   */
+const discountBody = document.getElementById("discountBody");
+const discountMessage = document.getElementById("discountMessage");
+const activeOnlyCheckbox = document.getElementById("activeOnlyCheckbox");
+const reloadDiscountsBtn = document.getElementById("reloadDiscountsBtn");
+const logoutLink = document.getElementById("logoutLink");
 
-  const DISCOUNT_TYPES = {
-    NONE: "none",
-    PERCENT: "percent",
-    FIXED: "fixed",
-    SENIOR: "senior",
-    PWD: "pwd"
+let allDiscounts = [];
+
+logoutLink?.addEventListener("click", () => {
+  window.API.clearAuth();
+});
+
+function safeDate(value) {
+  if (!value) return "-";
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return value;
+  return d.toLocaleDateString();
+}
+
+function formatDiscountValue(type, value) {
+  const num = Number(value || 0);
+  if ((type || "").toLowerCase() === "percent") return `${num}%`;
+  return `₱ ${num.toFixed(2)}`;
+}
+
+function statusClass(status = "") {
+  const s = status.toLowerCase();
+  if (s === "active") return "status-completed";
+  if (s === "inactive") return "status-cancelled";
+  return "status-pending";
+}
+
+function normalizeRow(raw) {
+  return {
+    name: raw.name ?? "-",
+    type: raw.type ?? "-",
+    value: raw.value ?? 0,
+    valid_from: raw.valid_from ?? null,
+    valid_until: raw.valid_until ?? null,
+    status: raw.status ?? "inactive",
   };
+}
 
-  const DEFAULT_SPECIAL_RATE = 0.2; // 20%
+function renderRows(rows) {
+  discountBody.innerHTML = "";
 
-  function toNumber(value, fallback = 0) {
-    const num = Number(value);
-    return Number.isFinite(num) ? num : fallback;
+  if (!rows.length) {
+    discountBody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align:center; color:#64748b; padding:20px;">
+          No discounts found.
+        </td>
+      </tr>
+    `;
+    return;
   }
 
-  function clamp(value, min, max) {
-    return Math.min(max, Math.max(min, value));
+  rows.forEach((row) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${row.name}</td>
+      <td>${row.type}</td>
+      <td>${formatDiscountValue(row.type, row.value)}</td>
+      <td>${safeDate(row.valid_from)}</td>
+      <td>${safeDate(row.valid_until)}</td>
+      <td><span class="status-pill ${statusClass(row.status)}">${row.status}</span></td>
+    `;
+    discountBody.appendChild(tr);
+  });
+}
+
+function applyFilters() {
+  let rows = [...allDiscounts];
+
+  if (activeOnlyCheckbox.checked) {
+    rows = rows.filter((d) => String(d.status).toLowerCase() === "active");
   }
 
-  /**
-   * Computes discount amount from subtotal and config.
-   * @param {number} subtotal
-   * @param {{ type?: string, value?: number }} config
-   * @returns {{ type: string, rate: number, amount: number, subtotal: number, total: number }}
-   */
-  function calculateDiscount(subtotal, config = {}) {
-    const normalizedSubtotal = Math.max(0, toNumber(subtotal, 0));
-    const type = String(config.type || DISCOUNT_TYPES.NONE).toLowerCase();
-    const rawValue = Math.max(0, toNumber(config.value, 0));
+  renderRows(rows);
+  discountMessage.textContent = `Showing ${rows.length} discount(s).`;
+}
 
-    let rate = 0;
-    let amount = 0;
+async function loadDiscounts() {
+  discountMessage.textContent = "Loading discounts...";
 
-    if (type === DISCOUNT_TYPES.PERCENT) {
-      rate = clamp(rawValue / 100, 0, 1);
-      amount = normalizedSubtotal * rate;
-    } else if (type === DISCOUNT_TYPES.FIXED) {
-      amount = clamp(rawValue, 0, normalizedSubtotal);
-      rate = normalizedSubtotal ? amount / normalizedSubtotal : 0;
-    } else if (type === DISCOUNT_TYPES.SENIOR || type === DISCOUNT_TYPES.PWD) {
-      rate = DEFAULT_SPECIAL_RATE;
-      amount = normalizedSubtotal * rate;
-    } else {
-      rate = 0;
-      amount = 0;
+  try {
+    // Try /discounts first
+    const data = await window.API.get("/discounts");
+    const rows = Array.isArray(data.data) ? data.data : [];
+    allDiscounts = rows.map(normalizeRow);
+
+    applyFilters();
+    discountMessage.textContent = `Loaded ${allDiscounts.length} discount(s) from API.`;
+  } catch (err1) {
+    try {
+      // fallback endpoint if backend supports active-only route
+      const data2 = await window.API.get("/discounts/active");
+      const rows2 = Array.isArray(data2.data) ? data2.data : [];
+      allDiscounts = rows2.map(normalizeRow);
+
+      applyFilters();
+      discountMessage.textContent =
+        "Loaded discounts from /api/discounts/active (fallback endpoint).";
+    } catch (err2) {
+      // final fallback mock data if endpoint not ready
+      allDiscounts = [
+        {
+          name: "PWD",
+          type: "percent",
+          value: 10,
+          valid_from: "2026-04-01",
+          valid_until: "2026-06-30",
+          status: "active",
+        },
+        {
+          name: "Loyalty 50 OFF",
+          type: "fixed",
+          value: 50,
+          valid_from: "2026-04-01",
+          valid_until: "2026-12-31",
+          status: "active",
+        },
+        {
+          name: "Old Promo",
+          type: "percent",
+          value: 5,
+          valid_from: "2025-01-01",
+          valid_until: "2025-01-31",
+          status: "inactive",
+        },
+      ];
+
+      applyFilters();
+      discountMessage.textContent =
+        "Discount API not available yet. Showing temporary mock data.";
     }
-
-    amount = clamp(amount, 0, normalizedSubtotal);
-    const total = Math.max(0, normalizedSubtotal - amount);
-
-    return {
-      type,
-      rate,
-      amount,
-      subtotal: normalizedSubtotal,
-      total
-    };
   }
+}
 
-  /**
-   * Computes payment and change after discount.
-   * @param {number} subtotal
-   * @param {{ type?: string, value?: number }} discountConfig
-   * @param {number} payment
-   * @returns {{
-   *   discount: { type: string, rate: number, amount: number, subtotal: number, total: number },
-   *   payment: number,
-   *   change: number,
-   *   remaining: number,
-   *   isPaid: boolean
-   * }}
-   */
-  function calculatePaymentSummary(subtotal, discountConfig, payment) {
-    const discount = calculateDiscount(subtotal, discountConfig);
-    const normalizedPayment = Math.max(0, toNumber(payment, 0));
-    const change = Math.max(0, normalizedPayment - discount.total);
-    const remaining = Math.max(0, discount.total - normalizedPayment);
+activeOnlyCheckbox.addEventListener("change", applyFilters);
+reloadDiscountsBtn.addEventListener("click", loadDiscounts);
 
-    return {
-      discount,
-      payment: normalizedPayment,
-      change,
-      remaining,
-      isPaid: remaining <= 0
-    };
-  }
-
-  /**
-   * Formats number to PHP currency string.
-   * @param {number} value
-   * @returns {string}
-   */
-  function formatPHP(value) {
-    return `PHP ${toNumber(value, 0).toFixed(2)}`;
-  }
-
-  window.DiscountUtils = {
-    DISCOUNT_TYPES,
-    calculateDiscount,
-    calculatePaymentSummary,
-    formatPHP
-  };
-})();
+loadDiscounts();

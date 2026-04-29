@@ -361,24 +361,6 @@ th, td {
   text-align: left;
   font-size: 0.9rem;
 }
-<<<<<<< HEAD
-#togglePassword {
-  color: #fff !important;
-  fill: #fff !important;
-}
-
-#togglePassword svg {
-  fill: #fff !important;
-}
-
-#togglePassword img {
-  filter: invert(1) brightness(2);
-}
-#togglePassword {
-  background: transparent;
-  border: none;
-}   
-=======
 
 input {
   width: 100%;
@@ -550,4 +532,73 @@ input {
 }
 
 /* Optional: tiny modal-like alert fallback style consistency handled in JS alert */
->>>>>>> aa384becefac44a14a76f847c8cbcf90a9334672
+
+/* CUSTOMER PAGE */
+.customer-header {
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.customer-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.customer-controls input {
+  min-width: 240px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 9px 12px;
+}
+
+.customer-form-wrap {
+  background: #f8fafc;
+  border: 1px solid #eef2f7;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.customer-form-wrap h4 {
+  margin: 0 0 10px 0;
+  color: #0f172a;
+}
+
+.customer-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 10px;
+}
+
+.customer-form-grid input {
+  border: 1px solid #dbe3ec;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.customer-section table td {
+  vertical-align: middle;
+}
+
+/* DISCOUNT PAGE */
+.discount-header {
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.checkbox-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  user-select: none;
+}
+
+.checkbox-wrap input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
