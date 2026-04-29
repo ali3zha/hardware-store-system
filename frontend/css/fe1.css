@@ -33,8 +33,11 @@
     padding: 40px;
 }
 
-.page-header { margin-bottom: 30px; }
-.page-header h1 { font-size: 2.2rem; font-weight: 800; color: var(--black); }
+.page-header h2,
+.section-title,
+.page-title {
+  color: #000000 !important;
+}
 
 .card, .table-wrap {
     background: var(--white);
@@ -159,6 +162,9 @@ td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
   padding: 15px;
 }
 
+.page-title {
+  color: #ee4d2d; /* change this to any color you want */
+}
 /* MODAL */
 .modal {
   display: none;
@@ -218,3 +224,9 @@ td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
   cursor: pointer;
   margin-top: 15px;
 }
+
+.section-title {
+  margin-bottom: 20px;
+}
+/*product title
+

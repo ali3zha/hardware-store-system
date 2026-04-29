@@ -16,18 +16,13 @@
       <li><a href="./index.html"><i class="fas fa-home"></i> Dashboard</a></li>
       <li><a href="./pos.html"><i class="fas fa-cash-register"></i> Go to POS</a></li>
       <li><a href="./product.html" class="active"><i class="fas fa-tools"></i> Manage Products</a></li>
-            <li><a href="./category.html"><i class="fas fa-layer-group"></i> Category</a></li>
+      <li><a href="./category.html"><i class="fas fa-layer-group"></i> Category</a></li>
       <li><a href="./transactions.html"><i class="fas fa-receipt"></i> View Transactions</a></li>
       <li><a href="./stock-movements.html"><i class="fas fa-right-left"></i> View Stock Movements</a></li>
-      <li>
-        <a href="./login.html" id="logoutLink">
-          <i class="fas fa-right-from-bracket"></i> Logout
-        </a>
-      </li>
+      <li><a href="./login.html" id="logoutLink"><i class="fas fa-right-from-bracket"></i> Logout</a></li>
     </ul>
   </div>
 
-  <!-- keep both classes so existing FE1 styles still work -->
   <div class="main page">
     <div class="page-header">
       <h1>Inventory Management</h1>
@@ -35,7 +30,8 @@
     </div>
 
     <div class="card">
-      <h2 style="margin-bottom: 20px;"><i class="fas fa-plus-circle"></i> Add / Edit Product</h2>
+      <h2 class="section-title"><i class="fas fa-plus-circle"></i> Add / Edit Product</h2>
+
       <form id="productForm" class="form-grid">
         <input id="productName" placeholder="Product Name" required />
         <input id="productSku" placeholder="SKU" required />
@@ -60,6 +56,20 @@
       </form>
     </div>
 
+    <!-- Search + Filters -->
+    <div class="card filter-card">
+      <div class="filter-row">
+        <input id="searchInput" placeholder="Search by name / SKU..." />
+        <select id="categoryFilter">
+          <option value="">All Categories</option>
+        </select>
+        <select id="supplierFilter">
+          <option value="">All Suppliers</option>
+        </select>
+        <button id="resetFilterBtn" type="button">Reset</button>
+      </div>
+    </div>
+
     <div class="table-wrap">
       <table>
         <thead>
@@ -75,6 +85,7 @@
         </thead>
         <tbody id="productTableBody"></tbody>
       </table>
+      <p id="productMsg"></p>
     </div>
   </div>
 
@@ -84,6 +95,7 @@
       localStorage.removeItem("user");
     });
   </script>
+  <script src="./js/api.js"></script>
   <script src="./js/product.js"></script>
 </body>
 </html>
