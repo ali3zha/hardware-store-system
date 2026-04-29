@@ -1,47 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Category | NAILed IT</title>
-  <link rel="stylesheet" href="css/fe1.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    .category-grid { 
-        display: grid; 
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-        gap: 20px; 
-        margin-bottom: 30px; 
-    }
-    .cat-card { 
-        background: white; 
-        padding: 25px; 
-        border-radius: 16px; 
-        text-align: center; 
-        cursor: pointer; 
-        transition: 0.3s;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-    }
-    .cat-card:hover { 
-        border-color: #ee4d2d; 
-        transform: translateY(-5px); 
-        box-shadow: 0 10px 20px rgba(238, 77, 45, 0.1); 
-    }
-    .cat-card i { font-size: 2.5rem; color: #0f172a; margin-bottom: 15px; }
-    .cat-card:hover i { color: #ee4d2d; }
-
-    /* Modal for Order */
-    .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
-    .modal-content { background: white; width: 380px; margin: 10% auto; padding: 30px; border-radius: 20px; text-align: center; }
-    .modal-content img { width: 150px; height: 150px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; border: 3px solid #ee4d2d; }
-    .btn-order { background: #ee4d2d; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-  </style>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/fe1.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
 
   <div class="sidebar">
     <div class="logo">
-      <h2 style="color: white; padding: 20px;">NAIL<span style="color: #ee4d2d;">ed</span> IT</h2>
+      <h2 class="brand-title">NAIL<span>ed</span> IT</h2>
     </div>
     <ul>
       <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
@@ -54,7 +25,7 @@
     </ul>
   </div>
 
-  <div class="page" style="margin-left: 260px; padding: 40px;">
+  <div class="page category-page">
     <div class="page-header">
       <h1>Product Category</h1>
       <p>Browse items by category and place quick orders.</p>
@@ -70,11 +41,11 @@
     </div>
 
     <div class="table-wrap">
-      <h3 id="tableTitle" style="margin-bottom: 20px;">Showing: All Items</h3>
-      <table style="width: 100%; border-collapse: collapse;">
+      <h3 id="tableTitle" class="table-title">Showing: All Items</h3>
+      <table class="inventory-table">
         <thead>
-          <tr style="text-align: left; background: #0f172a; color: white;">
-            <th style="padding: 15px;">Hardware Product</th>
+          <tr>
+            <th>Hardware Product</th>
             <th>Category</th>
             <th>Stock Status</th>
             <th>Price</th>
@@ -89,10 +60,10 @@
     <div class="modal-content">
       <img id="modalImg" src="" alt="Product">
       <h2 id="modalName">Product Name</h2>
-      <p id="modalCat" style="color: #64748b; margin-bottom: 10px;"></p>
-      <h3 id="modalPrice" style="color: #ee4d2d; font-size: 1.8rem;">₱0.00</h3>
+      <p id="modalCat" class="modal-cat"></p>
+      <h3 id="modalPrice" class="modal-price">₱0.00</h3>
       <button class="btn-order" onclick="confirmOrder()">Confirm Order</button>
-      <button onclick="closeModal()" style="background: none; border: none; color: #64748b; cursor: pointer; margin-top: 15px;">Cancel</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
     </div>
   </div>
 
