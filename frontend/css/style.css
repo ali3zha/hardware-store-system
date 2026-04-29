@@ -1,6 +1,6 @@
 :root {
   --orange: #ee4d2d;
-  --black: #ffffff;
+  --black: #0f172a;
   --sidebar-bg: #0f172a;
   --bg: #f8fafc;
 }
@@ -237,4 +237,28 @@ td {
 .status-success {
   background: #dcfce7;
   color: #15803d;
+}
+
+/* Shared page header (use on all pages) */
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--black);
+  line-height: 1.2;
+}
+
+.page-header p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 1.05rem;
+}
+
+/* Optional: consistent section spacing below header */
+.page-content-start {
+  margin-top: 8px;
 }
