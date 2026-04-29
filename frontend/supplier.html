@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suppliers</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/fe1.css">
+</head>
+<body>
+  <div class="sidebar">
+    <h2>NAILED<span>IT</span></h2>
+    <ul>
+      <li><a href="./index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+      <li><a href="./Product.html"><i class="fas fa-tools"></i> Manage Products</a></li>
+      <li><a href="./category.html"><i class="fas fa-list-ul"></i> Categories</a></li>
+      <li><a href="./supplier.html" class="active"><i class="fas fa-shipping-fast"></i> Suppliers</a></li>
+      <li><a href="./stock-movements.html"><i class="fas fa-right-left"></i> Stock Movements</a></li>
+    </ul>
+  </div>
+
+  <div class="page">
+    <div class="page-header">
+      <div>
+        <h1>Suppliers</h1>
+        <p>Track trusted vendors and keep purchasing data looking organized.</p>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-card">
+        <span class="eyebrow">Supplier Network</span>
+        <div class="hero-copy">
+          <h1>Present supplier information in a clean and professional way.</h1>
+          <p>Monitor contacts, phone numbers, and emails in one polished interface that feels ready for demo and defense.</p>
+        </div>
+      </div>
+
+      <div class="highlight-card">
+        <h3>Preferred Vendors</h3>
+        <div class="mini-list">
+          <div class="mini-item"><strong>BuildPro Supply</strong><span class="mini-value">A+</span></div>
+          <div class="mini-item"><strong>Metro Paint Depot</strong><span class="mini-value">A</span></div>
+          <div class="mini-item"><strong>FixHub Traders</strong><span class="mini-value">A</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-truck"></i></div>
+        <h3>Total Suppliers</h3>
+        <p>22</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-phone"></i></div>
+        <h3>Reachable Contacts</h3>
+        <p>20</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+        <h3>Email Records</h3>
+        <p>19</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Add Supplier</h2>
+      <form id="supplierForm" class="form-grid">
+        <input id="supplierName" placeholder="Supplier name" required>
+        <input id="supplierContact" placeholder="Contact person">
+        <input id="supplierPhone" placeholder="Phone">
+        <input id="supplierEmail" type="email" placeholder="Email">
+        <button type="submit">Add Supplier</button>
+      </form>
+      <p id="supplierError" class="error"></p>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-head">
+        <div>
+          <h2>Supplier Directory</h2>
+          <p>All suppliers shown in one refined table for easier presentation.</p>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Phone</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody id="supplierTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="js/supplier.js"></script>
+</body>
+</html>
