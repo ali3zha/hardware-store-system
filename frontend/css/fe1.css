@@ -39,31 +39,12 @@
   color: #000000 !important;
 }
 
-/* DASHBOARD CARDS */
-.card {
-  background: linear-gradient(135deg, #ff7a00, #ffae79);
-  color: #ffffff;
-  padding: 25px;
-  border-radius: 16px;
-  margin-bottom: 25px;
-  box-shadow: 0 8px 20px rgba(255, 122, 0, 0.2);
-}
-
-/* Keep table white */
-.table-wrap {
-  background: #ffffff;
-  padding: 25px;
-  border-radius: 16px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-}
-
-/* Text inside cards */
-.card h1,
-.card h2,
-.card h3,
-.card p {
-  color: #ffffff;
+.card, .table-wrap {
+    background: var(--white);
+    padding: 25px;
+    border-radius: 16px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
 }
 
 /* Form Styling */
