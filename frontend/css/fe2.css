@@ -454,3 +454,19 @@ tbody tr:hover {
   color: #fff2df !important;
   box-shadow: 0 16px 30px rgba(255, 122, 0, 0.12) !important;
 }
+#togglePassword {
+  color: #fff !important;
+  fill: #fff !important;
+}
+
+#togglePassword svg {
+  fill: #fff !important;
+}
+
+#togglePassword img {
+  filter: invert(1) brightness(2);
+}
+#togglePassword {
+  background: transparent;
+  border: none;
+}   
