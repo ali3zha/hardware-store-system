@@ -220,6 +220,15 @@ async function checkout() {
   cart = [];
   renderCart();
 
+<<<<<<< HEAD
+  function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = String(text ?? "");
+    return div.innerHTML;
+  }
+})();
+
+=======
   // refresh stock/products (optional)
   await loadProducts();
 }
@@ -238,3 +247,4 @@ if (localStorage.getItem("token")) {
 } else {
   window.location.href = "./login.html";
 }
+>>>>>>> aa384becefac44a14a76f847c8cbcf90a9334672

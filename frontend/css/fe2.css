@@ -361,6 +361,24 @@ th, td {
   text-align: left;
   font-size: 0.9rem;
 }
+<<<<<<< HEAD
+#togglePassword {
+  color: #fff !important;
+  fill: #fff !important;
+}
+
+#togglePassword svg {
+  fill: #fff !important;
+}
+
+#togglePassword img {
+  filter: invert(1) brightness(2);
+}
+#togglePassword {
+  background: transparent;
+  border: none;
+}   
+=======
 
 input {
   width: 100%;
@@ -532,3 +550,4 @@ input {
 }
 
 /* Optional: tiny modal-like alert fallback style consistency handled in JS alert */
+>>>>>>> aa384becefac44a14a76f847c8cbcf90a9334672
