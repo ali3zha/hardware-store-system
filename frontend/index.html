@@ -3,27 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NAILed IT</title>
+  <title>Nailed It | Hardware Management</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
-  <main class="hero">
-    <nav class="top-nav">
-      <h1 class="brand">NAILed IT</h1>
-      <a class="login-btn" href="./login.html">Login</a>
-    </nav>
 
-    <section class="hero-content">
-      <h2>Hardware Store Management System</h2>
-      <p>
-        Manage inventory, sales, and procurement in one place.
-      </p>
+  <div class="sidebar">
+    <h2>NAILED<span>IT</span></h2>
+    <ul>
+      <li><a href="index.html" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+      <li><a href="product.html"><i class="fas fa-tools"></i> Inventory</a></li>
+      <li><a href="category.html"><i class="fas fa-list-ul"></i> Categories</a></li>
+      <li><a href="supplier.html"><i class="fas fa-shipping-fast"></i> Suppliers</a></li>
+    </ul>
+  </div>
 
-      <div class="hero-actions">
-        <a href="./pos.html" class="btn primary">Go to POS</a>
-        <a href="./product.html" class="btn secondary">View Products</a>
+  <div class="main">
+    <div class="header">
+      <div>
+        <h1>Dashboard</h1>
+        <p>Welcome back! Here's what's happening at <b>Nailed It</b> today.</p>
       </div>
-    </section>
-  </main>
+      <div class="admin-btn">
+        <i class="fas fa-user-shield"></i> Admin Panel <span class="admin-badge">AD</span>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="icon-box"><i class="fas fa-box-open"></i></div>
+        <h3>Total Items</h3>
+        <p>4,502</p>
+      </div>
+      <div class="stat-card">
+        <div class="icon-box icon-orange"><i class="fas fa-exclamation-circle"></i></div>
+        <h3>Low Stocks</h3>
+        <p class="text-orange">18</p>
+      </div>
+      <div class="stat-card">
+        <div class="icon-box icon-green"><i class="fas fa-clipboard-check"></i></div>
+        <h3>Recent Sales</h3>
+        <p>124</p>
+      </div>
+    </div>
+
+    <div class="table-section">
+      <div class="table-header">
+        <h3>Latest Stock Updates</h3>
+        <a href="product.html" class="view-link">Manage All Items</a>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Hardware Product</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Movement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="product-cell">
+                <img src="https://images.unsplash.com/photo-1586864387917-f749f55939b7?w=100" class="product-img" alt="Claw Hammer 16oz" />
+                <div><b>Claw Hammer 16oz</b><br><small>ID: #8821</small></div>
+              </div>
+            </td>
+            <td>Hand Tools</td>
+            <td class="qty">+25</td>
+            <td><span class="status-tag status-success">Restocked</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="product-cell">
+                <img src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=100" class="product-img" alt="Boysen Latex White" />
+                <div><b>Boysen Latex White</b><br><small>ID: #4432</small></div>
+              </div>
+            </td>
+            <td>Paints</td>
+            <td class="qty">+10</td>
+            <td><span class="status-tag status-success">Restocked</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </body>
 </html>
