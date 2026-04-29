@@ -1,5 +1,3 @@
-const API_BASE = "http://localhost:5000/api";
-
 const transactionsBody = document.getElementById("transactionsBody");
 const txMessage = document.getElementById("txMessage");
 const fromDateEl = document.getElementById("fromDate");
@@ -11,8 +9,7 @@ const logoutLink = document.getElementById("logoutLink");
 let allTransactions = [];
 
 logoutLink?.addEventListener("click", () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+  window.API.clearAuth();
 });
 
 function money(v) {
@@ -64,7 +61,6 @@ function renderRows(rows) {
 
   rows.forEach((row) => {
     const tr = document.createElement("tr");
-
     tr.innerHTML = `
       <td>${row.sale_id}</td>
       <td>${safeDate(row.sale_date)}</td>
@@ -74,7 +70,6 @@ function renderRows(rows) {
       <td><span class="status-pill ${statusClass(row.status)}">${row.status}</span></td>
       <td><button class="details-btn" data-id="${row.sale_id}">View Details</button></td>
     `;
-
     transactionsBody.appendChild(tr);
   });
 
@@ -84,7 +79,6 @@ function renderRows(rows) {
       const tx = allTransactions.find((t) => String(t.sale_id) === String(id));
       if (!tx) return;
 
-      // Optional: save for receipt page
       localStorage.setItem("lastSale", JSON.stringify(tx));
 
       alert(
@@ -128,30 +122,17 @@ function resetFilters() {
 }
 
 async function loadTransactions() {
-  const token = localStorage.getItem("token");
   txMessage.textContent = "Loading transactions...";
 
   try {
-    const res = await fetch(`${API_BASE}/sales`, {
-      method: "GET",
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-
-    const data = await res.json().catch(() => ({}));
-
-    if (!res.ok || data.success === false) {
-      throw new Error(data.message || "Failed to fetch /api/sales");
-    }
-
+    // uses shared helper from api.js
+    const data = await window.API.get("/sales");
     const rows = Array.isArray(data.data) ? data.data : [];
     allTransactions = rows.map(normalizeRow);
 
     renderRows(allTransactions);
     txMessage.textContent = `Loaded ${allTransactions.length} transaction(s) from API.`;
   } catch (err) {
-    // fallback mock
     allTransactions = [
       {
         sale_id: 1001,
@@ -180,8 +161,7 @@ async function loadTransactions() {
     ];
 
     renderRows(allTransactions);
-    txMessage.textContent =
-      "GET /api/sales not available yet. Showing temporary mock data.";
+    txMessage.textContent = "GET /api/sales not available yet. Showing temporary mock data.";
   }
 }
 
