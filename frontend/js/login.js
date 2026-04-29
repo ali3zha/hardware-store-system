@@ -7,6 +7,11 @@
 
   if (!form) return;
 
+  // If already logged in, skip login page
+  if (window.Auth) {
+    window.Auth.redirectIfLoggedIn();
+  }
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -22,25 +27,30 @@
       return;
     }
 
-    // 🔥 MULTIPLE USERS
-    if (
+    // Demo credentials
+    const valid =
       (username === "admin" && password === "password123") ||
       (username === "staff" && password === "hihihi01") ||
       (username === "inventory" && password === "hahaha02") ||
-      (username === "staff1" && password === "huhuhu03")
-    ) {
-      sessionStorage.setItem("hardwareStoreAuthUser", JSON.stringify({ username }));
+      (username === "staff1" && password === "huhuhu03");
 
-      setStatus("Login successful. Redirecting...", false);
-
-      setTimeout(() => {
-        window.location.href = "./index.html";
-      }, 500);
-
-    } else {
+    if (!valid) {
       setStatus("Invalid username or password", true);
       setLoading(false);
+      return;
     }
+
+    // Save auth consistently in localStorage (token + user)
+    const fakeToken = `demo-token-${Date.now()}`;
+    const user = { username };
+
+    window.Auth.setAuth(fakeToken, user);
+
+    setStatus("Login successful. Redirecting...", false);
+
+    setTimeout(() => {
+      window.location.href = "./index.html";
+    }, 500);
   });
 
   function setStatus(msg, err) {
