@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hardware Store - Login</title>
+  <link rel="stylesheet" href="./css/fe2.css" />
+  <style>
+    .password-wrap {
+      position: relative;
+    }
+
+    #togglePassword {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .hint {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Hardware Store</div>
+      <nav class="nav">
+        <a href="./customer.html">Customer</a>
+        <a href="./pos.html">POS</a>
+        <a href="./discount.html">Discount</a>
+        <a href="./receipt.html">Receipt</a>
+        <a href="./transactions.html">Transactions</a>
+      </nav>
+    </div>
+  </div>
+
+  <main class="login-page">
+    <section class="login-card card">
+      <h1 class="title" style="text-align: center; margin-bottom: 8px;">Welcome Back</h1>
+      <p class="subtitle" style="text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 18px;">
+        Sign in to Hardware Store System
+      </p>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input id="email" name="email" type="email" placeholder="Enter your email" required />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input id="password" name="password" type="password" placeholder="Enter your password" required />
+            <button class="btn btn-outline" type="button" id="togglePassword">SHOW</button>
+          </div>
+        </div>
+
+        <div class="checkbox-row">
+          <input id="rememberMe" type="checkbox" />
+          <label for="rememberMe" style="margin: 0; display: inline; color: var(--muted); font-size: 13px;">Remember me</label>
+        </div>
+
+        <button class="btn" id="loginBtn" type="submit" style="width: 100%; margin-top: 14px;">Login</button>
+        <p id="status" class="status"></p>
+
+        <div class="hint">
+          Demo credentials:<br />
+          Email: <strong>admin@hardware.com</strong><br />
+          Password: <strong>admin123</strong>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="./js/login.js"></script>
+</body>
+</html>
