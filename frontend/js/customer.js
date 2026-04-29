@@ -1,3 +1,6 @@
+Auth.requireAuth();
+Auth.attachLogout("logoutLink");
+
 const customerTableBody = document.getElementById("customerTableBody");
 const customerMsg = document.getElementById("customerMsg");
 const searchInput = document.getElementById("searchInput");

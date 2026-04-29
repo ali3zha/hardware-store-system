@@ -1,72 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Receipt | NAILed IT</title>
-<link rel="stylesheet" href="./css/style.css" />
-<link rel="stylesheet" href="./css/fe2.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Receipt | NAILed IT</title>
+  <style>
+    body {
+      margin: 0;
+      background: #d9d9d9;
+      font-family: "Courier New", monospace;
+      color: #444;
+    }
+
+    .receipt-stage {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .cash-receipt {
+      width: 320px;
+      background: #fff;
+      padding: 22px 18px 26px;
+      box-shadow: 0 20px 38px rgba(0, 0, 0, 0.18);
+      position: relative;
+    }
+
+    .cash-receipt::before,
+    .cash-receipt::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background:
+        radial-gradient(circle at 8px 8px, transparent 8px, #fff 8px) 0 0/16px 10px repeat-x;
+    }
+
+    .cash-receipt::before { top: -10px; transform: rotate(180deg); }
+    .cash-receipt::after { bottom: -10px; }
+
+    .center { text-align: center; }
+    .shop-name { margin: 0; font-size: 36px; letter-spacing: 2px; font-weight: 900; color: #555; }
+    .shop-meta { margin: 2px 0 0; font-size: 12px; letter-spacing: 0.4px; }
+    .divider { margin: 12px 0; text-align: center; letter-spacing: 2px; color: #777; font-size: 12px; }
+    .receipt-title { margin: 0; font-size: 30px; letter-spacing: 1px; color: #666; }
+
+    .meta-row, .sum-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      margin: 2px 0;
+    }
+
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 12px;
+    }
+    .items-table th { text-align: left; color: #555; padding-bottom: 2px; }
+    .items-table th:last-child, .items-table td:last-child { text-align: right; }
+    .items-table td { padding: 1px 0; vertical-align: top; }
+
+    .sum-row.total {
+      margin-top: 8px;
+      font-size: 38px;
+      font-weight: 900;
+      color: #333;
+      line-height: 1;
+    }
+
+    .thanks { margin: 8px 0 0; text-align: center; font-size: 26px; font-weight: 800; letter-spacing: 1px; color: #555; }
+    .barcode {
+      margin: 12px auto 0;
+      width: 190px;
+      height: 38px;
+      background: repeating-linear-gradient(90deg, #333 0 2px, #fff 2px 4px, #333 4px 5px, #fff 5px 8px);
+    }
+
+    .actions {
+      margin-top: 16px;
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+    }
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      background: #ef4d2f;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn.secondary { background: #111827; }
+
+    @media print {
+      body { background: #fff; }
+      .actions { display: none; }
+      .cash-receipt { box-shadow: none; }
+    }
+  </style>
 </head>
 <body>
+  <div class="receipt-stage">
+    <section class="cash-receipt" id="receiptContainer">
+      <div class="center">
+        <h1 class="shop-name">NAILED IT</h1>
+        <p class="shop-meta">Address: Butuan City</p>
+        <p class="shop-meta">Telp. 11 223344</p>
+      </div>
 
-<div class="container receipt-wrap">
-<h1 class="no-print" style="margin-top: 10px;">Receipt</h1>
+      <div class="divider">************************</div>
+      <h2 class="receipt-title center">CASH RECEIPT</h2>
+      <div class="divider">************************</div>
 
-<div class="receipt-paper" id="receiptContainer">
-<div class="receipt-head">
-<h3 style="font-size: 20px; margin-bottom: 4px;">NAILed IT Hardware Store</h3>
-<div class="muted" id="receiptSubtitle">Official Sales Receipt</div>
-</div>
+      <div class="meta-row"><span>sale_id</span><strong id="saleIdText">-</strong></div>
+      <div class="meta-row"><span>date/time</span><strong id="dateTimeText">-</strong></div>
 
-<div class="receipt-meta-grid">
-<div class="receipt-meta-box">
-<div class="receipt-meta-label">Sale ID</div>
-<div class="receipt-meta-value" id="saleIdText">-</div>
-</div>
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody id="itemsBody"></tbody>
+      </table>
 
-<div class="receipt-meta-box">
-<div class="receipt-meta-label">Date/Time</div>
-<div class="receipt-meta-value" id="dateTimeText">-</div>
-</div>
-</div>
+      <div class="divider">************************</div>
+      <div class="sum-row total"><span>Total</span><span id="totalText">0.00</span></div>
+      <div class="sum-row"><span>Subtotal</span><strong id="subtotalText">0.00</strong></div>
+      <div class="sum-row"><span>Discount</span><strong id="discountText">0.00</strong></div>
+      <div class="sum-row"><span>Tax</span><strong id="taxText">0.00</strong></div>
+      <div class="sum-row"><span>Cash</span><strong id="tenderedText">0.00</strong></div>
+      <div class="sum-row"><span>Change</span><strong id="changeText">0.00</strong></div>
+      <div class="divider">************************</div>
+      <div class="sum-row"><span>Approval Code</span><span id="approvalCodeText">#-</span></div>
+      <div class="divider">************************</div>
 
-<h3 style="margin-top: 10px; margin-bottom: 8px;">Sold Items Summary</h3>
+      <p class="thanks">THANK YOU!</p>
+      <div class="barcode"></div>
 
-<div class="table-wrap">
-<table class="receipt-table">
-<thead>
-<tr>
-<th>Product ID</th>
-<th>Name</th>
-<th>Qty</th>
-<th>Price</th>
-<th>Line Total</th>
-</tr>
-</thead>
-<tbody id="itemsBody"></tbody>
-</table>
-</div>
+      <div class="actions">
+        <button class="btn" id="printBtn" type="button">Print</button>
+        <a class="btn secondary" href="./pos.html">Back to POS</a>
+      </div>
+    </section>
+  </div>
 
-<div class="summary">
-<div class="summary-row"><span>Subtotal</span><strong id="subtotalText">PHP 0.00</strong></div>
-<div class="summary-row"><span>Discount</span><strong id="discountText">PHP 0.00</strong></div>
-<div class="summary-row"><span>Tax</span><strong id="taxText">PHP 0.00</strong></div>
-<div class="summary-row grand"><span>Total</span><strong id="totalText">PHP 0.00</strong></div>
-<div class="summary-row"><span>Amount Tendered</span><strong id="tenderedText">PHP 0.00</strong></div>
-<div class="summary-row"><span>Change</span><strong id="changeText">PHP 0.00</strong></div>
-</div>
-
-<p class="muted" style="margin-top: 14px; text-align: center;">
-Thank you for shopping with us!
-</p>
-
-<div class="actions-row no-print">
-<button class="btn" id="printBtn" type="button">Print</button>
-<a class="btn btn-secondary" href="./pos.html">Back to POS</a>
-</div>
-</div>
-</div>
-
-<script src="./js/receipt.js"></script>
+  <script src="./js/receipt.js"></script>
 </body>
 </html>

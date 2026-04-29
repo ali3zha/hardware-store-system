@@ -1,3 +1,6 @@
+Auth.requireAuth();
+Auth.attachLogout("logoutLink");
+
 const discountBody = document.getElementById("discountBody");
 const discountMessage = document.getElementById("discountMessage");
 const activeOnlyCheckbox = document.getElementById("activeOnlyCheckbox");
@@ -19,7 +22,8 @@ function safeDate(value) {
 
 function formatDiscountValue(type, value) {
   const num = Number(value || 0);
-  if ((type || "").toLowerCase() === "percent") return `${num}%`;
+  const t = (type || "").toLowerCase();
+  if (t === "percent" || t === "percentage") return `${num}%`;
   return `₱ ${num.toFixed(2)}`;
 }
 

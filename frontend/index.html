@@ -34,17 +34,17 @@
       <div class="stat-card">
         <div class="icon-box"><i class="fas fa-box-open"></i></div>
         <h3>Total Items</h3>
-        <p>4,502</p>
+        <p id="totalItemsEl">0</p>
       </div>
       <div class="stat-card">
         <div class="icon-box icon-orange"><i class="fas fa-exclamation-circle"></i></div>
         <h3>Low Stocks</h3>
-        <p class="text-orange">18</p>
+        <p class="text-orange" id="lowStocksEl">0</p>
       </div>
       <div class="stat-card">
         <div class="icon-box icon-green"><i class="fas fa-clipboard-check"></i></div>
         <h3>Recent Sales</h3>
-        <p>124</p>
+        <p id="recentSalesEl">0</p>
       </div>
     </div>
 
@@ -62,38 +62,14 @@
             <th>Movement</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>
-              <div class="product-cell">
-                <img src="https://images.unsplash.com/photo-1586864387917-f749f55939b7?w=100" class="product-img" alt="Claw Hammer 16oz" />
-                <div><b>Claw Hammer 16oz</b><br /><small>ID: #8821</small></div>
-              </div>
-            </td>
-            <td>Hand Tools</td>
-            <td class="qty">+25</td>
-            <td><span class="status-tag status-success">Restocked</span></td>
-          </tr>
-          <tr>
-            <td>
-              <div class="product-cell">
-                <img src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=100" class="product-img" alt="Boysen Latex White" />
-                <div><b>Boysen Latex White</b><br /><small>ID: #4432</small></div>
-              </div>
-            </td>
-            <td>Paints</td>
-            <td class="qty">+10</td>
-            <td><span class="status-tag status-success">Restocked</span></td>
-          </tr>
-        </tbody>
+        <tbody id="latestStockBody"></tbody>
       </table>
+      <p id="dashboardStatus" style="margin-top:10px;color:#64748b;font-size:13px;"></p>
     </div>
   </div>
 
   <script src="./js/auth.js"></script>
-  <script>
-    Auth.requireAuth();
-    Auth.attachLogout("logoutLink");
-  </script>
+  <script src="./js/api.js"></script>
+  <script src="./js/dashboard.js"></script>
 </body>
 </html>

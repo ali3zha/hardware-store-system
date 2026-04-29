@@ -1,4 +1,5 @@
-const supplierApi = "/api/suppliers";
+Auth.requireAuth();
+Auth.attachLogout("logoutLink");
 
 const supplierTableBody = document.getElementById("supplierTableBody");
 const supplierForm = document.getElementById("supplierForm");
@@ -14,9 +15,8 @@ function escapeHtml(value) {
 }
 
 async function fetchSuppliers() {
-  const res = await fetch(supplierApi);
-  if (!res.ok) throw new Error("Failed to load suppliers.");
-  const rows = await res.json();
+  const res = await window.API.get("/suppliers");
+  const rows = Array.isArray(res.data) ? res.data : [];
   supplierTableBody.innerHTML = rows
     .map((row) => {
       const id = row.supplier_id ?? row.id;
@@ -44,12 +44,7 @@ async function onSubmit(event) {
   };
 
   try {
-    const res = await fetch(supplierApi, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error("Failed to add supplier.");
+    await window.API.post("/suppliers", payload);
     supplierForm.reset();
     await fetchSuppliers();
   } catch (error) {

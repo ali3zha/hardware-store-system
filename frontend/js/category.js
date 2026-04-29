@@ -1,54 +1,90 @@
-const products = [
-    { name: "Stanley Claw Hammer", cat: "Hand Tools", stock: "24 pcs", price: 450.00, img: "https://images.unsplash.com/photo-1586864387917-f749f55939b7?w=200" },
-    { name: "Adjustable Wrench", cat: "Hand Tools", stock: "15 pcs", price: 320.00, img: "https://images.unsplash.com/photo-1620055375740-9a25039304a0?w=200" },
-    { name: "Boysen Latex White", cat: "Paints", stock: "12 pcs", price: 680.00, img: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=200" },
-    { name: "Bosch Cordless Drill", cat: "Power Tools", stock: "8 pcs", price: 3200.00, img: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=200" },
-    { name: "Omni LED Bulb 9W", cat: "Electrical", stock: "50 pcs", price: 145.00, img: "https://images.unsplash.com/photo-1550985616-10810253b84d?w=200" },
-    { name: "PVC Pipe 1/2 Blue", cat: "Plumbing", stock: "100 pcs", price: 85.00, img: "https://images.unsplash.com/photo-1581094288338-2314dddb7ec4?w=200" }
-];
+(() => {
+  Auth.requireAuth();
+  Auth.attachLogout("logoutLink");
 
-function filterData(category) {
-    document.getElementById('tableTitle').innerText = "Showing: " + (category === 'All' ? 'All Items' : category);
-    const body = document.getElementById('inventoryBody');
+  const gridEl = document.querySelector(".category-grid");
+  const tableTitle = document.getElementById("tableTitle");
+  const body = document.getElementById("inventoryBody");
+
+  let products = [];
+  let activeCategory = "All";
+
+  function money(v) {
+    return Number(v || 0).toLocaleString("en-PH", { minimumFractionDigits: 2 });
+  }
+
+  function renderCategories(categories) {
+    if (!gridEl) return;
+    gridEl.innerHTML = "";
+    const iconByCategory = {
+      "All Items": "fas fa-list",
+      Paints: "fas fa-paint-roller",
+      "Hand Tools": "fas fa-hammer",
+      "Power Tools": "fas fa-bolt",
+      Electrical: "fas fa-plug",
+      Plumbing: "fas fa-faucet",
+    };
+
+    const allCard = document.createElement("div");
+    allCard.className = "cat-card";
+    allCard.innerHTML = `<i class="${iconByCategory["All Items"]}"></i><h4>All Items</h4>`;
+    allCard.addEventListener("click", () => {
+      activeCategory = "All";
+      renderTable();
+    });
+    gridEl.appendChild(allCard);
+
+    categories.forEach((c) => {
+      const card = document.createElement("div");
+      card.className = "cat-card";
+      const iconClass = iconByCategory[c.name] || "fas fa-layer-group";
+      card.innerHTML = `<i class="${iconClass}"></i><h4>${c.name}</h4>`;
+      card.addEventListener("click", () => {
+        activeCategory = c.name;
+        renderTable();
+      });
+      gridEl.appendChild(card);
+    });
+  }
+
+  function renderTable() {
+    const filtered =
+      activeCategory === "All"
+        ? products
+        : products.filter((p) => p.category_name === activeCategory);
+
+    tableTitle.textContent = `Showing: ${activeCategory === "All" ? "All Items" : activeCategory}`;
     body.innerHTML = "";
 
-    const filtered = products.filter(p => category === 'All' || p.cat === category);
+    if (!filtered.length) {
+      body.innerHTML = `<tr><td colspan="4" class="empty">No products found.</td></tr>`;
+      return;
+    }
 
-    filtered.forEach(p => {
-        // Peso format logic
-        const formattedPrice = p.price.toLocaleString('en-PH', { minimumFractionDigits: 2 });
-        
-        body.innerHTML += `
-            <tr onclick="openOrder('${p.name}', '${p.cat}', '${formattedPrice}', '${p.img}')" style="cursor:pointer;">
-                <td>
-                    <div class="product-meta" style="display:flex; align-items:center; gap:12px;">
-                        <img src="${p.img}" class="product-thumb" style="width:45px; height:45px; border-radius:10px; object-fit:cover;">
-                        <strong>${p.name}</strong>
-                    </div>
-                </td>
-                <td>${p.cat}</td>
-                <td><span class="tag tag-ok" style="background:#dcfce7; color:#166534; padding:5px 10px; border-radius:8px;">${p.stock}</span></td>
-                <td style="font-weight: 700; color: var(--black);">₱${formattedPrice}</td>
-            </tr>`;
+    filtered.forEach((p) => {
+      const statusClass = Number(p.stock_qty) <= Number(p.reorder_level) ? "tag-low" : "tag-ok";
+      body.innerHTML += `
+        <tr>
+          <td><strong>${p.name}</strong></td>
+          <td>${p.category_name || "-"}</td>
+          <td><span class="tag ${statusClass}">${p.stock_qty} pcs</span></td>
+          <td style="font-weight:700;">₱${money(p.selling_price)}</td>
+        </tr>
+      `;
     });
-}
+  }
 
-function openOrder(name, cat, price, img) {
-    document.getElementById('modalName').innerText = name;
-    document.getElementById('modalCat').innerText = cat;
-    document.getElementById('modalPrice').innerText = "₱" + price;
-    document.getElementById('modalImg').src = img;
-    document.getElementById('orderModal').style.display = "block";
-}
+  async function init() {
+    const [catRes, prodRes] = await Promise.all([
+      window.API.get("/categories"),
+      window.API.get("/products"),
+    ]);
+    renderCategories(catRes.data || []);
+    products = prodRes.data || [];
+    renderTable();
+  }
 
-function closeModal() {
-    document.getElementById('orderModal').style.display = "none";
-}
-
-function confirmOrder() {
-    const name = document.getElementById('modalName').innerText;
-    alert("Order Successful!\n\nYour request for " + name + " has been added to the system.");
-    closeModal();
-}
-
-window.onload = () => filterData('All');
+  init().catch(() => {
+    body.innerHTML = `<tr><td colspan="4" class="empty">Failed to load category data.</td></tr>`;
+  });
+})();

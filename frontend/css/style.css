@@ -76,21 +76,35 @@ body {
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
+  align-items: flex-start;
+  margin-bottom: 28px;
 }
 
-.header h1 {
-  font-size: 2.2rem;
+.header h1,
+.page-header h1 {
   margin: 0;
-  color: var(--sidebar-bg);
-  font-weight: 800;
+  font-size: 2.25rem;
+  font-weight: 900;
+  line-height: 1.15;
+  color: var(--black);
 }
 
-.header p {
+.header h1::after,
+.page-header h1::after {
+  content: "";
+  display: block;
+  width: 88px;
+  height: 4px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: var(--orange);
+}
+
+.header p,
+.page-header p {
+  margin: 8px 0 0;
   color: #64748b;
-  margin: 5px 0 0;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 /* Dashboard Stats Cards */
@@ -102,11 +116,11 @@ body {
 }
 
 .stat-card {
-  background: white;
+  background: linear-gradient(135deg, #ff8a63 0%, #ee4d2d 100%);
   padding: 30px;
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  border: 1px solid #f1f5f9;
+  border: 1px solid #ef6a4e;
   transition: 0.3s;
 }
 
@@ -116,8 +130,8 @@ body {
 }
 
 .icon-box {
-  background: #f1f5f9;
-  color: var(--black);
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
   padding: 12px;
   border-radius: 12px;
   margin-bottom: 20px;
@@ -125,15 +139,15 @@ body {
 }
 
 .icon-orange {
-  color: var(--orange);
+  color: #fff;
 }
 
 .icon-green {
-  color: #15803d;
+  color: #fff;
 }
 
 .stat-card h3 {
-  color: #64748b;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 1rem;
   margin: 0;
   font-weight: 600;
@@ -143,11 +157,11 @@ body {
   font-size: 2.5rem;
   font-weight: 900;
   margin: 10px 0 0;
-  color: var(--sidebar-bg);
+  color: #fff;
 }
 
 .text-orange {
-  color: var(--orange);
+  color: #fff;
 }
 
 /* Recent Activity Table */
@@ -242,20 +256,6 @@ td {
 /* Shared page header (use on all pages) */
 .page-header {
   margin-bottom: 24px;
-}
-
-.page-header h1 {
-  margin: 0;
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: var(--black);
-  line-height: 1.2;
-}
-
-.page-header p {
-  margin: 6px 0 0;
-  color: #64748b;
-  font-size: 1.05rem;
 }
 
 /* Optional: consistent section spacing below header */

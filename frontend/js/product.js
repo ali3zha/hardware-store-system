@@ -92,7 +92,10 @@
         <td>${formatMoney(p.selling_price)}</td>
         <td>${p.stock_qty}</td>
         <td>${stockStatus(p)}</td>
-        <td><button class="btn-outline edit-btn" data-id="${p.product_id}">Edit</button></td>
+        <td>
+          <button class="btn-outline edit-btn" data-id="${p.product_id}">Edit</button>
+          <button class="btn-outline delete-btn" data-id="${p.product_id}">Delete</button>
+        </td>
       `;
       tbody.appendChild(row);
     });
@@ -113,6 +116,24 @@
         supplierEl.value = p.supplier_id || "";
         saveBtn.textContent = "Update Product";
         setStatus(formStatus, "Editing product...");
+      });
+    });
+
+    document.querySelectorAll(".delete-btn").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = Number(btn.dataset.id);
+        const p = products.find((x) => Number(x.product_id) === id);
+        const ok = window.confirm(`Delete product "${p?.name || id}"?`);
+        if (!ok) return;
+
+        try {
+          await API.delete(`/products/${id}`);
+          setStatus(tableStatus, "Product deleted successfully.");
+          if (editingId === id) clearForm();
+          await loadProducts();
+        } catch (err) {
+          setStatus(tableStatus, err.message || "Failed to delete product.", true);
+        }
       });
     });
   }

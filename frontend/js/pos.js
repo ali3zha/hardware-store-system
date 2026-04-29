@@ -149,6 +149,36 @@ function cartItemsForAPI() {
   }));
 }
 
+function buildReceiptPayload(checkoutData) {
+  const soldItems = cart.map((item) => ({
+    product_id: item.product_id,
+    name: item.name,
+    qty: item.quantity,
+    price: item.unit_price,
+  }));
+
+  return {
+    sale_id: checkoutData.sale_id,
+    date_time: new Date().toLocaleString(),
+    items: soldItems,
+    subtotal: Number(checkoutData.subtotal || 0),
+    discount: Number(checkoutData.discountAmount || 0),
+    tax: Number(checkoutData.taxAmount || 0),
+    total: Number(checkoutData.totalAmount || 0),
+    amount_tendered: Number(tenderedEl.value || 0),
+    change: Number(checkoutData.change_given || 0),
+  };
+}
+
+function saveReceipt(receipt) {
+  sessionStorage.setItem("lastSaleReceipt", JSON.stringify(receipt));
+  localStorage.setItem("lastSaleReceipt", JSON.stringify(receipt));
+
+  const existing = JSON.parse(localStorage.getItem("salesHistory") || "[]");
+  const next = [receipt, ...existing].slice(0, 30);
+  localStorage.setItem("salesHistory", JSON.stringify(next));
+}
+
 async function loadProducts() {
   const t = requireAuthOrRedirect();
   if (!t) return;
@@ -215,6 +245,8 @@ async function checkout() {
     `Sale successful! Sale ID: ${d.sale_id} | Total: ${money(d.totalAmount)} | Change: ${money(d.change_given)}`
   );
 
+  const receiptPayload = buildReceiptPayload(d);
+  saveReceipt(receiptPayload);
   localStorage.setItem("lastSale", JSON.stringify(d));
 
   cart = [];
@@ -222,6 +254,11 @@ async function checkout() {
 
   // refresh stock/products (optional)
   await loadProducts();
+
+  // Auto-open receipt page after successful checkout
+  window.setTimeout(() => {
+    window.location.href = "./receipt.html";
+  }, 400);
 }
 
 loadProductsBtn.addEventListener("click", () => {

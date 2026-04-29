@@ -118,7 +118,7 @@ exports.createSale = async (req, res) => {
 
       await conn.query(
         `INSERT INTO stock_movement (product_id, user_id, type, quantity, reason, moved_at)
-         VALUES (?, ?, 'OUT', ?, 'Sale transaction', NOW())`,
+         VALUES (?, ?, 'out', ?, 'Sale transaction', NOW())`,
         [item.product_id, user_id, item.quantity]
       );
     }
