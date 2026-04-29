@@ -1,220 +1,206 @@
-const form = document.getElementById("productForm");
-const submitBtn = document.getElementById("submitBtn");
+(() => {
+  Auth.requireAuth();
+  Auth.attachLogout("logoutLink");
 
-const nameEl = document.getElementById("productName");
-const skuEl = document.getElementById("productSku");
-const priceEl = document.getElementById("productPrice");
-const stockEl = document.getElementById("productStock");
-const thresholdEl = document.getElementById("productLowThreshold");
-const categoryEl = document.getElementById("productCategory");
-const supplierEl = document.getElementById("productSupplier");
+  const form = document.getElementById("productForm");
+  const saveBtn = document.getElementById("saveBtn");
+  const formStatus = document.getElementById("formStatus");
+  const tableStatus = document.getElementById("tableStatus");
 
-const searchInput = document.getElementById("searchInput");
-const categoryFilter = document.getElementById("categoryFilter");
-const supplierFilter = document.getElementById("supplierFilter");
-const resetFilterBtn = document.getElementById("resetFilterBtn");
+  const nameEl = document.getElementById("name");
+  const skuEl = document.getElementById("sku");
+  const priceEl = document.getElementById("price");
+  const stockEl = document.getElementById("stock");
+  const reorderEl = document.getElementById("reorder");
+  const categoryEl = document.getElementById("categoryId");
+  const supplierEl = document.getElementById("supplierId");
 
-const tableBody = document.getElementById("productTableBody");
-const msgEl = document.getElementById("productMsg");
+  const searchInput = document.getElementById("searchInput");
+  const categoryFilter = document.getElementById("categoryFilter");
+  const supplierFilter = document.getElementById("supplierFilter");
+  const resetFilterBtn = document.getElementById("resetFilterBtn");
 
-let products = [];
-let categories = [];
-let suppliers = [];
-let editId = null;
+  const tbody = document.getElementById("productTableBody");
 
-function showMsg(text, isError = false) {
-  msgEl.textContent = text;
-  msgEl.style.color = isError ? "#dc2626" : "#15803d";
-}
+  let products = [];
+  let categories = [];
+  let suppliers = [];
+  let editingId = null;
 
-function money(v) {
-  return Number(v || 0).toFixed(2);
-}
-
-function statusLabel(stock, reorderLevel) {
-  return Number(stock) <= Number(reorderLevel) ? "Low Stock" : "In Stock";
-}
-
-function fillCategoryOptions() {
-  categoryEl.innerHTML = `<option value="">Category</option>`;
-  categoryFilter.innerHTML = `<option value="">All Categories</option>`;
-
-  categories.forEach((c) => {
-    categoryEl.innerHTML += `<option value="${c.category_id}">${c.name}</option>`;
-    categoryFilter.innerHTML += `<option value="${c.category_id}">${c.name}</option>`;
-  });
-}
-
-function fillSupplierOptions() {
-  supplierEl.innerHTML = `<option value="">Supplier</option>`;
-  supplierFilter.innerHTML = `<option value="">All Suppliers</option>`;
-
-  suppliers.forEach((s) => {
-    supplierEl.innerHTML += `<option value="${s.supplier_id}">${s.name}</option>`;
-    supplierFilter.innerHTML += `<option value="${s.supplier_id}">${s.name}</option>`;
-  });
-}
-
-function renderTable(list) {
-  tableBody.innerHTML = "";
-
-  if (!list.length) {
-    tableBody.innerHTML = `
-      <tr>
-        <td colspan="7" style="text-align:center; padding:18px; color:#64748b;">No products found.</td>
-      </tr>
-    `;
-    return;
+  function setStatus(el, msg, isErr = false) {
+    el.textContent = msg || "";
+    el.className = isErr ? "status err" : "status ok";
   }
 
-  list.forEach((p) => {
-    const low = Number(p.stock_qty) <= Number(p.reorder_level);
-    const status = statusLabel(p.stock_qty, p.reorder_level);
+  function formatMoney(v) {
+    return Number(v || 0).toFixed(2);
+  }
 
-    const tr = document.createElement("tr");
-    if (low) tr.style.background = "#fff7ed";
+  function stockStatus(product) {
+    const low = Number(product.stock_qty) <= Number(product.reorder_level);
+    return low
+      ? '<span class="badge err">Low Stock</span>'
+      : '<span class="badge ok">In Stock</span>';
+  }
 
-    tr.innerHTML = `
-      <td>${p.name}</td>
-      <td>${p.sku || "-"}</td>
-      <td>${p.category_name || p.category_id || "-"}</td>
-      <td>${money(p.selling_price)}</td>
-      <td>${p.stock_qty}</td>
-      <td>
-        <span class="${low ? "status-low" : "status-ok"}">${status}</span>
-      </td>
-      <td>
-        <button type="button" class="edit-btn" data-id="${p.product_id}">Edit</button>
-      </td>
-    `;
-
-    tableBody.appendChild(tr);
-  });
-
-  document.querySelectorAll(".edit-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = Number(btn.dataset.id);
-      const p = products.find((x) => Number(x.product_id) === id);
-      if (!p) return;
-
-      editId = id;
-      submitBtn.textContent = "Update Product";
-
-      nameEl.value = p.name || "";
-      skuEl.value = p.sku || "";
-      priceEl.value = p.selling_price || "";
-      stockEl.value = p.stock_qty || "";
-      thresholdEl.value = p.reorder_level || 10;
-      categoryEl.value = p.category_id || "";
-      supplierEl.value = p.supplier_id || "";
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  function fillDropdowns() {
+    categoryEl.innerHTML = `<option value="">Select Category</option>`;
+    categoryFilter.innerHTML = `<option value="">All Categories</option>`;
+    categories.forEach((c) => {
+      categoryEl.innerHTML += `<option value="${c.category_id}">${c.name}</option>`;
+      categoryFilter.innerHTML += `<option value="${c.category_id}">${c.name}</option>`;
     });
-  });
-}
 
-function applyFilters() {
-  const q = searchInput.value.trim().toLowerCase();
-  const cat = categoryFilter.value;
-  const sup = supplierFilter.value;
-
-  const filtered = products.filter((p) => {
-    const matchSearch =
-      !q ||
-      String(p.name || "").toLowerCase().includes(q) ||
-      String(p.sku || "").toLowerCase().includes(q);
-
-    const matchCat = !cat || String(p.category_id) === String(cat);
-    const matchSup = !sup || String(p.supplier_id) === String(sup);
-
-    return matchSearch && matchCat && matchSup;
-  });
-
-  renderTable(filtered);
-}
-
-async function loadProducts() {
-  const data = await window.API.get("/products");
-  products = Array.isArray(data.data) ? data.data : [];
-  applyFilters();
-}
-
-async function loadCategories() {
-  try {
-    const data = await window.API.get("/categories");
-    categories = Array.isArray(data.data) ? data.data : [];
-  } catch {
-    categories = [];
+    supplierEl.innerHTML = `<option value="">Select Supplier</option>`;
+    supplierFilter.innerHTML = `<option value="">All Suppliers</option>`;
+    suppliers.forEach((s) => {
+      supplierEl.innerHTML += `<option value="${s.supplier_id}">${s.name}</option>`;
+      supplierFilter.innerHTML += `<option value="${s.supplier_id}">${s.name}</option>`;
+    });
   }
-  fillCategoryOptions();
-}
 
-async function loadSuppliers() {
-  try {
-    const data = await window.API.get("/suppliers");
-    suppliers = Array.isArray(data.data) ? data.data : [];
-  } catch {
-    suppliers = [];
-  }
-  fillSupplierOptions();
-}
+  function renderTable() {
+    const q = searchInput.value.trim().toLowerCase();
+    const cat = categoryFilter.value;
+    const sup = supplierFilter.value;
 
-function resetForm() {
-  form.reset();
-  thresholdEl.value = 10;
-  editId = null;
-  submitBtn.textContent = "Save Product";
-}
+    const filtered = products.filter((p) => {
+      const name = String(p.name || "").toLowerCase();
+      const sku = String(p.sku || "").toLowerCase();
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+      const bySearch = !q || name.includes(q) || sku.includes(q);
+      const byCat = !cat || String(p.category_id) === String(cat);
+      const bySup = !sup || String(p.supplier_id) === String(sup);
 
-  const payload = {
-    name: nameEl.value.trim(),
-    sku: skuEl.value.trim(),
-    selling_price: Number(priceEl.value || 0),
-    stock_qty: Number(stockEl.value || 0),
-    reorder_level: Number(thresholdEl.value || 10),
-    category_id: Number(categoryEl.value),
-    supplier_id: Number(supplierEl.value),
-    status: "active",
-    // optional backend fields
-    barcode: null,
-    cost_price: Number(priceEl.value || 0),
-    unit: "pc",
-  };
+      return bySearch && byCat && bySup;
+    });
 
-  try {
-    if (editId) {
-      await window.API.put(`/products/${editId}`, payload); // PUT /api/products/:id
-      showMsg("Product updated successfully.");
-    } else {
-      await window.API.post("/products", payload); // POST /api/products
-      showMsg("Product added successfully.");
+    tbody.innerHTML = "";
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="7" class="empty">No products found.</td></tr>`;
+      return;
     }
 
-    resetForm();
-    await loadProducts();
-  } catch (err) {
-    showMsg(err.message || "Failed to save product.", true);
+    filtered.forEach((p) => {
+      const row = document.createElement("tr");
+      if (Number(p.stock_qty) <= Number(p.reorder_level)) row.classList.add("low-row");
+
+      row.innerHTML = `
+        <td>${p.name}</td>
+        <td>${p.sku}</td>
+        <td>${p.category_name || p.category_id}</td>
+        <td>${formatMoney(p.selling_price)}</td>
+        <td>${p.stock_qty}</td>
+        <td>${stockStatus(p)}</td>
+        <td><button class="btn-outline edit-btn" data-id="${p.product_id}">Edit</button></td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    document.querySelectorAll(".edit-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = Number(btn.dataset.id);
+        const p = products.find((x) => Number(x.product_id) === id);
+        if (!p) return;
+
+        editingId = id;
+        nameEl.value = p.name || "";
+        skuEl.value = p.sku || "";
+        priceEl.value = p.selling_price || 0;
+        stockEl.value = p.stock_qty || 0;
+        reorderEl.value = p.reorder_level || 10;
+        categoryEl.value = p.category_id || "";
+        supplierEl.value = p.supplier_id || "";
+        saveBtn.textContent = "Update Product";
+        setStatus(formStatus, "Editing product...");
+      });
+    });
   }
-});
 
-searchInput.addEventListener("input", applyFilters);
-categoryFilter.addEventListener("change", applyFilters);
-supplierFilter.addEventListener("change", applyFilters);
+  async function loadLookups() {
+    try {
+      const [catRes, supRes] = await Promise.all([
+        API.get("/categories"),
+        API.get("/suppliers"),
+      ]);
 
-resetFilterBtn.addEventListener("click", () => {
-  searchInput.value = "";
-  categoryFilter.value = "";
-  supplierFilter.value = "";
-  applyFilters();
-});
-
-(async function init() {
-  try {
-    await Promise.all([loadCategories(), loadSuppliers()]);
-    await loadProducts();
-  } catch (err) {
-    showMsg(err.message || "Failed to load product page data.", true);
+      categories = catRes.data || [];
+      suppliers = supRes.data || [];
+      fillDropdowns();
+    } catch {
+      // fallback if endpoints not yet available
+      categories = [];
+      suppliers = [];
+      fillDropdowns();
+    }
   }
+
+  async function loadProducts() {
+    setStatus(tableStatus, "Loading products...");
+    try {
+      const res = await API.get("/products");
+      products = res.data || [];
+      renderTable();
+      setStatus(tableStatus, `Loaded ${products.length} product(s).`);
+    } catch (err) {
+      setStatus(tableStatus, err.message || "Failed to load products.", true);
+    }
+  }
+
+  function clearForm() {
+    form.reset();
+    reorderEl.value = 10;
+    editingId = null;
+    saveBtn.textContent = "Save Product";
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      name: nameEl.value.trim(),
+      sku: skuEl.value.trim(),
+      category_id: Number(categoryEl.value),
+      supplier_id: Number(supplierEl.value),
+      selling_price: Number(priceEl.value),
+      stock_qty: Number(stockEl.value),
+      reorder_level: Number(reorderEl.value),
+      status: "active",
+      // optional fields expected by your BE2 insert query
+      barcode: null,
+      cost_price: Number(priceEl.value),
+      unit: "pc",
+    };
+
+    try {
+      if (editingId) {
+        await API.put(`/products/${editingId}`, payload);
+        setStatus(formStatus, "Product updated successfully.");
+      } else {
+        await API.post("/products", payload);
+        setStatus(formStatus, "Product added successfully.");
+      }
+
+      clearForm();
+      await loadProducts();
+    } catch (err) {
+      setStatus(formStatus, err.message || "Failed to save product.", true);
+    }
+  });
+
+  searchInput.addEventListener("input", renderTable);
+  categoryFilter.addEventListener("change", renderTable);
+  supplierFilter.addEventListener("change", renderTable);
+
+  resetFilterBtn.addEventListener("click", () => {
+    searchInput.value = "";
+    categoryFilter.value = "";
+    supplierFilter.value = "";
+    renderTable();
+  });
+
+  (async function init() {
+    await loadLookups();
+    await loadProducts();
+  })();
 })();

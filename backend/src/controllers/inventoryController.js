@@ -1,5 +1,27 @@
 const pool = require("../config/db");
 
+exports.getCategories = async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      "SELECT category_id, name, description FROM category ORDER BY name ASC"
+    );
+    res.json({ success: true, data: rows });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getSuppliers = async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      "SELECT supplier_id, name FROM supplier ORDER BY name ASC"
+    );
+    res.json({ success: true, data: rows });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 exports.getProducts = async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM product ORDER BY product_id ASC");
