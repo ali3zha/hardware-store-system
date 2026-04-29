@@ -1,204 +1,72 @@
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Receipt | NAILed IT</title>
+<link rel="stylesheet" href="./css/style.css" />
+<link rel="stylesheet" href="./css/fe2.css" />
 </head>
 <body>
-  <div class="container receipt-wrap">
-    <h1 class="no-print" style="margin-top: 10px;">Receipt</h1>
 
-    <div class="receipt-paper" id="receiptContainer">
-      <div class="receipt-head">
-        <h3 style="font-size: 20px; margin-bottom: 4px;">Hardware Store</h3>
-        <div class="muted" id="receiptSubtitle">Official Sales Receipt</div>
-      </div>
+<div class="container receipt-wrap">
+<h1 class="no-print" style="margin-top: 10px;">Receipt</h1>
 
-      <div class="receipt-meta-grid">
-        <div class="receipt-meta-box">
-          <div class="receipt-meta-label">sale_id</div>
-          <div class="receipt-meta-value" id="saleIdText">-</div>
-        </div>
-        <div class="receipt-meta-box">
-          <div class="receipt-meta-label">date/time</div>
-          <div class="receipt-meta-value" id="dateTimeText">-</div>
-        </div>
-      </div>
+<div class="receipt-paper" id="receiptContainer">
+<div class="receipt-head">
+<h3 style="font-size: 20px; margin-bottom: 4px;">NAILed IT Hardware Store</h3>
+<div class="muted" id="receiptSubtitle">Official Sales Receipt</div>
+</div>
 
-      <h3 style="margin-top: 10px; margin-bottom: 8px;">Sold Items Summary</h3>
+<div class="receipt-meta-grid">
+<div class="receipt-meta-box">
+<div class="receipt-meta-label">Sale ID</div>
+<div class="receipt-meta-value" id="saleIdText">-</div>
+</div>
 
-      <div class="table-wrap">
-        <table class="receipt-table">
-          <thead>
-            <tr>
-              <th>Product ID</th>
-              <th>Name</th>
-              <th>Qty</th>
-              <th>Price</th>
-              <th>Line Total</th>
-            </tr>
-          </thead>
-          <tbody id="itemsBody"></tbody>
-        </table>
-      </div>
+<div class="receipt-meta-box">
+<div class="receipt-meta-label">Date/Time</div>
+<div class="receipt-meta-value" id="dateTimeText">-</div>
+</div>
+</div>
 
-      <div style="height: 10px;"></div>
+<h3 style="margin-top: 10px; margin-bottom: 8px;">Sold Items Summary</h3>
 
-      <div class="summary">
-        <div class="summary-row"><span>Subtotal</span><strong id="subtotalText">PHP 0.00</strong></div>
-        <div class="summary-row"><span>Discount</span><strong id="discountText">PHP 0.00</strong></div>
-        <div class="summary-row"><span>Tax</span><strong id="taxText">PHP 0.00</strong></div>
-        <div class="summary-row grand"><span>Total</span><strong id="totalText">PHP 0.00</strong></div>
-        <div class="summary-row"><span>Amount Tendered</span><strong id="tenderedText">PHP 0.00</strong></div>
-        <div class="summary-row"><span>Change</span><strong id="changeText">PHP 0.00</strong></div>
-      </div>
+<div class="table-wrap">
+<table class="receipt-table">
+<thead>
+<tr>
+<th>Product ID</th>
+<th>Name</th>
+<th>Qty</th>
+<th>Price</th>
+<th>Line Total</th>
+</tr>
+</thead>
+<tbody id="itemsBody"></tbody>
+</table>
+</div>
 
-      <p class="muted" style="margin-top: 14px; text-align: center;">
-        Thank you for shopping with us!
-      </p>
+<div class="summary">
+<div class="summary-row"><span>Subtotal</span><strong id="subtotalText">PHP 0.00</strong></div>
+<div class="summary-row"><span>Discount</span><strong id="discountText">PHP 0.00</strong></div>
+<div class="summary-row"><span>Tax</span><strong id="taxText">PHP 0.00</strong></div>
+<div class="summary-row grand"><span>Total</span><strong id="totalText">PHP 0.00</strong></div>
+<div class="summary-row"><span>Amount Tendered</span><strong id="tenderedText">PHP 0.00</strong></div>
+<div class="summary-row"><span>Change</span><strong id="changeText">PHP 0.00</strong></div>
+</div>
 
-      <div class="actions-row no-print">
-        <button class="btn" id="printBtn" type="button">Print</button>
-        <a class="btn btn-secondary" href="./pos.html" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
-          Back to POS
-        </a>
-      </div>
-    </div>
-  </div>
+<p class="muted" style="margin-top: 14px; text-align: center;">
+Thank you for shopping with us!
+</p>
 
-  <script>
-    const STORAGE_LAST_KEY = "lastSaleReceipt";
-    const STORAGE_HISTORY_KEY = "salesHistory";
+<div class="actions-row no-print">
+<button class="btn" id="printBtn" type="button">Print</button>
+<a class="btn btn-secondary" href="./pos.html">Back to POS</a>
+</div>
+</div>
+</div>
 
-    const saleIdText = document.getElementById("saleIdText");
-    const dateTimeText = document.getElementById("dateTimeText");
-    const itemsBody = document.getElementById("itemsBody");
-    const subtotalText = document.getElementById("subtotalText");
-    const discountText = document.getElementById("discountText");
-    const taxText = document.getElementById("taxText");
-    const totalText = document.getElementById("totalText");
-    const tenderedText = document.getElementById("tenderedText");
-    const changeText = document.getElementById("changeText");
-    const printBtn = document.getElementById("printBtn");
-
-    const receipt = loadLatestReceipt();
-
-    if (!receipt) {
-      itemsBody.innerHTML = `
-        <tr>
-          <td colspan="5" style="text-align:center;" class="muted">No receipt found. Checkout in POS first.</td>
-        </tr>
-      `;
-
-      saleIdText.textContent = "-";
-      dateTimeText.textContent = "-";
-      subtotalText.textContent = "PHP 0.00";
-      discountText.textContent = "PHP 0.00";
-      taxText.textContent = "PHP 0.00";
-      totalText.textContent = "PHP 0.00";
-      tenderedText.textContent = "PHP 0.00";
-      changeText.textContent = "PHP 0.00";
-    } else {
-      saleIdText.textContent = safeText(receipt.sale_id);
-      dateTimeText.textContent = safeText(receipt.date_time);
-
-      const items = Array.isArray(receipt.items) ? receipt.items : [];
-      itemsBody.innerHTML = items.length
-        ? items
-            .map((item) => {
-              const pid = item.product_id ?? "";
-              const name = item.name ?? "Item";
-              const qty = toNumber(item.qty, 0);
-              const price = toNumber(item.price, 0);
-              const lineTotal = qty * price;
-              return `
-                <tr>
-                  <td>${escapeHtml(String(pid))}</td>
-                  <td>${escapeHtml(String(name))}</td>
-                  <td>${qty}</td>
-                  <td>${money(price)}</td>
-                  <td>${money(lineTotal)}</td>
-                </tr>
-              `;
-            })
-            .join("")
-        : `
-          <tr>
-            <td colspan="5" style="text-align:center;" class="muted">No sold items.</td>
-          </tr>
-        `;
-
-      subtotalText.textContent = money(receipt.subtotal);
-      discountText.textContent = money(receipt.discount);
-      taxText.textContent = money(receipt.tax);
-      totalText.textContent = money(receipt.total);
-      tenderedText.textContent = money(receipt.amount_tendered);
-      changeText.textContent = money(receipt.change);
-    }
-
-    if (printBtn) {
-      printBtn.addEventListener("click", () => window.print());
-    }
-
-    function loadLatestReceipt() {
-      const fromSession = parseStorage(sessionStorage.getItem(STORAGE_LAST_KEY));
-      if (fromSession) return normalizeReceipt(fromSession);
-
-      const fromLocalHistory = parseStorage(localStorage.getItem(STORAGE_HISTORY_KEY));
-      if (Array.isArray(fromLocalHistory) && fromLocalHistory.length > 0) {
-        return normalizeReceipt(fromLocalHistory[0]);
-      }
-
-      return null;
-    }
-
-    function normalizeReceipt(raw) {
-      const items = Array.isArray(raw.items) ? raw.items : [];
-      const amountTendered = toNumber(raw.amount_tendered ?? raw.amountTendered ?? raw.payment, 0);
-      const total = toNumber(raw.total, 0);
-      const change = toNumber(raw.change ?? Math.max(0, amountTendered - total), 0);
-
-      return {
-        sale_id: raw.sale_id ?? raw.saleId ?? raw.id ?? "N/A",
-        date_time: raw.date_time ?? raw.datetime ?? raw.created_at ?? raw.date ?? new Date().toLocaleString(),
-        items: items.map((it) => ({
-          product_id: it.product_id ?? it.productId ?? it.id ?? "",
-          name: it.name ?? it.product_name ?? it.productName ?? "Item",
-          qty: toNumber(it.qty, 0),
-          price: toNumber(it.price, 0)
-        })),
-        subtotal: toNumber(raw.subtotal, 0),
-        discount: toNumber(raw.discount, 0),
-        tax: toNumber(raw.tax, 0),
-        total,
-        amount_tendered: amountTendered,
-        change
-      };
-    }
-
-    function parseStorage(value) {
-      if (!value) return null;
-      try {
-        return JSON.parse(value);
-      } catch {
-        return null;
-      }
-    }
-
-    function toNumber(v, fallback = 0) {
-      const n = Number(v);
-      return Number.isFinite(n) ? n : fallback;
-    }
-
-    function money(value) {
-      return `PHP ${toNumber(value, 0).toFixed(2)}`;
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement("div");
-      div.textContent = String(text ?? "");
-      return div.innerHTML;
-    }
-
-    function safeText(v) {
-      return String(v ?? "-");
-    }
-  </script>
+<script src="./js/receipt.js"></script>
 </body>
 </html>
