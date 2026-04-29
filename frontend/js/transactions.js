@@ -1,103 +1,136 @@
 const API_BASE = "http://localhost:5000/api";
-const token = localStorage.getItem("token");
 
 const transactionsBody = document.getElementById("transactionsBody");
+const txMessage = document.getElementById("txMessage");
 const fromDateEl = document.getElementById("fromDate");
 const toDateEl = document.getElementById("toDate");
 const applyFilterBtn = document.getElementById("applyFilterBtn");
+const resetFilterBtn = document.getElementById("resetFilterBtn");
+const logoutLink = document.getElementById("logoutLink");
 
-let allSales = [];
+let allTransactions = [];
 
-function money(n) {
-  return Number(n || 0).toFixed(2);
+logoutLink?.addEventListener("click", () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+});
+
+function money(v) {
+  return Number(v || 0).toFixed(2);
 }
 
-function formatDate(d) {
-  // d might be "2026-04-27T..." or "2026-04-27"
-  const dt = new Date(d);
-  if (Number.isNaN(dt.getTime())) return d || "";
-  return dt.toLocaleString();
+function safeDate(value) {
+  if (!value) return "";
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return value;
+  return d.toLocaleString();
 }
 
-function statusClass(status) {
-  const s = (status || "").toLowerCase();
+function statusClass(status = "") {
+  const s = status.toLowerCase();
   if (s === "completed") return "status-completed";
   if (s === "pending") return "status-pending";
-  return "status-completed";
+  if (s === "cancelled") return "status-cancelled";
+  return "status-pending";
 }
 
-function renderRows(sales) {
+function normalizeRow(raw) {
+  return {
+    sale_id: raw.sale_id ?? raw.id ?? "",
+    sale_date: raw.sale_date ?? raw.date ?? "",
+    user_display:
+      raw.user_name ??
+      raw.cashier ??
+      (raw.user_id ? `User #${raw.user_id}` : "N/A"),
+    total_amount: raw.total_amount ?? raw.total ?? 0,
+    payment_method: raw.payment_method ?? "N/A",
+    status: raw.status ?? "pending",
+  };
+}
+
+function renderRows(rows) {
   transactionsBody.innerHTML = "";
 
-  if (!sales.length) {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td colspan="7" style="color:#64748b; padding:20px;">No records found.</td>`;
-    transactionsBody.appendChild(tr);
+  if (!rows.length) {
+    transactionsBody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align:center; color:#64748b; padding:20px;">
+          No transactions found.
+        </td>
+      </tr>
+    `;
     return;
   }
 
-  sales.forEach((s) => {
-    const saleId = s.sale_id ?? s.id ?? "";
-    const date = s.sale_date ?? s.date ?? "";
-    const cashier = s.user_id ?? s.cashier ?? "";
-    const total = s.total_amount ?? s.total ?? 0;
-    const paymentMethod = s.payment_method ?? "";
-    const status = s.status ?? "";
-
+  rows.forEach((row) => {
     const tr = document.createElement("tr");
+
     tr.innerHTML = `
-      <td>${saleId}</td>
-      <td>${formatDate(date)}</td>
-      <td>${cashier}</td>
-      <td>${money(total)}</td>
-      <td>${paymentMethod}</td>
-      <td><span class="status-pill ${statusClass(status)}">${status}</span></td>
-      <td>
-        <button type="button" class="btn-view" data-id="${saleId}">
-          View
-        </button>
-      </td>
+      <td>${row.sale_id}</td>
+      <td>${safeDate(row.sale_date)}</td>
+      <td>${row.user_display}</td>
+      <td>₱ ${money(row.total_amount)}</td>
+      <td>${row.payment_method}</td>
+      <td><span class="status-pill ${statusClass(row.status)}">${row.status}</span></td>
+      <td><button class="details-btn" data-id="${row.sale_id}">View Details</button></td>
     `;
+
     transactionsBody.appendChild(tr);
   });
 
-  // Optional: view details -> store last sale for receipt.html
-  document.querySelectorAll(".btn-view").forEach((btn) => {
+  document.querySelectorAll(".details-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const id = btn.getAttribute("data-id");
-      const sale = allSales.find((x) => String(x.sale_id ?? x.id) === String(id));
-      if (sale) {
-        localStorage.setItem("lastSale", JSON.stringify(sale));
-      }
-      // If you have receipt.html implemented:
-      window.location.href = "./receipt.html";
+      const id = btn.dataset.id;
+      const tx = allTransactions.find((t) => String(t.sale_id) === String(id));
+      if (!tx) return;
+
+      // Optional: save for receipt page
+      localStorage.setItem("lastSale", JSON.stringify(tx));
+
+      alert(
+        `Sale ID: ${tx.sale_id}\nDate: ${safeDate(tx.sale_date)}\nCashier: ${tx.user_display}\nTotal: ₱ ${money(
+          tx.total_amount
+        )}\nPayment: ${tx.payment_method}\nStatus: ${tx.status}`
+      );
     });
   });
 }
 
 function applyDateFilter() {
-  const fromVal = fromDateEl.value ? new Date(fromDateEl.value) : null;
-  const toVal = toDateEl.value ? new Date(toDateEl.value) : null;
+  const from = fromDateEl.value ? new Date(fromDateEl.value) : null;
+  const to = toDateEl.value ? new Date(toDateEl.value) : null;
 
-  const filtered = allSales.filter((s) => {
-    const d = s.sale_date ?? s.date;
-    const dt = new Date(d);
-    if (Number.isNaN(dt.getTime())) return false;
+  const filtered = allTransactions.filter((row) => {
+    if (!row.sale_date) return false;
+    const d = new Date(row.sale_date);
+    if (isNaN(d.getTime())) return false;
 
-    if (fromVal && dt < fromVal) return false;
-    if (toVal) {
-      // include the whole "to" day
-      const endOfDay = new Date(toVal);
-      endOfDay.setHours(23, 59, 59, 999);
-      if (dt > endOfDay) return false;
+    if (from && d < from) return false;
+
+    if (to) {
+      const end = new Date(to);
+      end.setHours(23, 59, 59, 999);
+      if (d > end) return false;
     }
+
     return true;
   });
 
   renderRows(filtered);
+  txMessage.textContent = `Showing ${filtered.length} transaction(s).`;
 }
 
-async function loadSales() {
+function resetFilters() {
+  fromDateEl.value = "";
+  toDateEl.value = "";
+  renderRows(allTransactions);
+  txMessage.textContent = `Showing ${allTransactions.length} transaction(s).`;
+}
+
+async function loadTransactions() {
+  const token = localStorage.getItem("token");
+  txMessage.textContent = "Loading transactions...";
+
   try {
     const res = await fetch(`${API_BASE}/sales`, {
       method: "GET",
@@ -108,51 +141,51 @@ async function loadSales() {
 
     const data = await res.json().catch(() => ({}));
 
-    // Expected shape: { success: true, data: [...] }
     if (!res.ok || data.success === false) {
-      throw new Error(data.message || "Failed to load sales");
+      throw new Error(data.message || "Failed to fetch /api/sales");
     }
 
-    const rows = data.data || data || [];
-    allSales = Array.isArray(rows) ? rows : [];
-    renderRows(allSales);
-  } catch (err) {
-    // Endpoint might not exist yet -> show mock table
-    console.warn("GET /api/sales not available, using mock data:", err.message);
+    const rows = Array.isArray(data.data) ? data.data : [];
+    allTransactions = rows.map(normalizeRow);
 
-    allSales = [
+    renderRows(allTransactions);
+    txMessage.textContent = `Loaded ${allTransactions.length} transaction(s) from API.`;
+  } catch (err) {
+    // fallback mock
+    allTransactions = [
       {
-        sale_id: 1,
-        sale_date: new Date().toISOString(),
-        user_id: 2,
+        sale_id: 1001,
+        sale_date: "2026-04-28T09:15:00",
+        user_display: "Cashier #2",
         total_amount: 433.44,
         payment_method: "cash",
         status: "completed",
       },
       {
-        sale_id: 2,
-        sale_date: new Date(Date.now() - 86400000).toISOString(),
-        user_id: 2,
-        total_amount: 220.00,
-        payment_method: "cash",
-        status: "completed",
-      },
-      {
-        sale_id: 3,
-        sale_date: new Date(Date.now() - 2 * 86400000).toISOString(),
-        user_id: 3,
-        total_amount: 120.50,
+        sale_id: 1002,
+        sale_date: "2026-04-28T11:40:00",
+        user_display: "Cashier #2",
+        total_amount: 220.0,
         payment_method: "cash",
         status: "pending",
       },
+      {
+        sale_id: 1003,
+        sale_date: "2026-04-29T13:05:00",
+        user_display: "Cashier #1",
+        total_amount: 990.5,
+        payment_method: "cash",
+        status: "completed",
+      },
     ];
 
-    renderRows(allSales);
+    renderRows(allTransactions);
+    txMessage.textContent =
+      "GET /api/sales not available yet. Showing temporary mock data.";
   }
 }
 
-applyFilterBtn.addEventListener("click", () => {
-  applyDateFilter();
-});
+applyFilterBtn.addEventListener("click", applyDateFilter);
+resetFilterBtn.addEventListener("click", resetFilters);
 
-loadSales();
+loadTransactions();
