@@ -117,7 +117,7 @@ td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
 }
 
 .cat-card {
-  background: #fff;
+  background: #ffae79;
   padding: 25px;
   border-radius: 16px;
   text-align: center;
@@ -128,7 +128,7 @@ td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
 }
 
 .cat-card:hover {
-  border-color: #ee4d2d;
+  border-color: #f36f54;
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(238, 77, 45, 0.1);
 }
