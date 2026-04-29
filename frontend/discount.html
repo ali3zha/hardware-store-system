@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hardware Store - Discounts</title>
+  <link rel="stylesheet" href="./css/fe2.css" />
+  <style>
+    .page-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 16px;
+    }
+
+    .hint {
+      color: #64748b;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 920px) {
+      .page-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Discount Management</h1>
+
+    <div class="page-grid">
+      <section class="card">
+        <h2>Discount List</h2>
+        <input id="searchInput" class="search" type="text" placeholder="Search by discount name..." />
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Value</th>
+                <th>Active</th>
+              </tr>
+            </thead>
+            <tbody id="discountTableBody"></tbody>
+          </table>
+        </div>
+        <p id="emptyState" class="empty">Loading discounts...</p>
+      </section>
+
+      <section class="card">
+        <h2>Add Discount</h2>
+        <p class="hint">API first (`/api/discounts`), fallback to static local data when unavailable.</p>
+
+        <form id="discountForm">
+          <div class="field">
+            <label for="nameInput">Discount Name</label>
+            <input id="nameInput" type="text" placeholder="e.g. Senior Citizen" required />
+          </div>
+
+          <div class="field">
+            <label for="typeInput">Type</label>
+            <select id="typeInput" required>
+              <option value="percent">Percent</option>
+              <option value="fixed">Fixed Amount</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="valueInput">Value</label>
+            <input id="valueInput" type="number" min="0" step="0.01" placeholder="e.g. 20 or 100" required />
+          </div>
+
+          <div class="field">
+            <label for="activeInput">Status</label>
+            <select id="activeInput">
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn">Save Discount</button>
+            <button type="button" id="resetBtn" class="btn btn-secondary">Reset</button>
+          </div>
+        </form>
+
+        <p id="statusText" class="status"></p>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const API_DISCOUNTS = "/api/discounts";
+    const LOCAL_KEY = "staticDiscountsFallback";
+
+    const discountTableBody = document.getElementById("discountTableBody");
+    const emptyState = document.getElementById("emptyState");
+    const searchInput = document.getElementById("searchInput");
+    const discountForm = document.getElementById("discountForm");
+    const nameInput = document.getElementById("nameInput");
+    const typeInput = document.getElementById("typeInput");
+    const valueInput = document.getElementById("valueInput");
+    const activeInput = document.getElementById("activeInput");
+    const resetBtn = document.getElementById("resetBtn");
+    const statusText = document.getElementById("statusText");
+
+    let discounts = [];
+    let filteredDiscounts = [];
+    let endpointAvailable = true;
+
+    init();
+
+    async function init() {
+      await loadDiscounts();
+      applySearch("");
+    }
+
+    async function loadDiscounts() {
+      setStatus("Loading discounts...", false);
+      emptyState.style.display = "block";
+      emptyState.textContent = "Loading discounts...";
+      discountTableBody.innerHTML = "";
+
+      try {
+        const response = await fetch(API_DISCOUNTS);
+        if (!response.ok) throw new Error(`GET failed (${response.status})`);
+        const data = await response.json();
+        discounts = normalizeDiscounts(Array.isArray(data) ? data : []);
+        endpointAvailable = true;
+        setStatus("Discounts loaded from API.", false);
+      } catch (error) {
+        console.warn("Discount API unavailable, using fallback.", error);
+        endpointAvailable = false;
+        discounts = loadLocalFallback();
+        if (!discounts.length) {
+          discounts = getInitialStaticDiscounts();
+          saveLocalFallback(discounts);
+        }
+        setStatus("API unavailable. Using local fallback data.", true);
+      }
+
+      filteredDiscounts = [...discounts];
+      renderTable();
+    }
+
+    searchInput.addEventListener("input", (event) => {
+      applySearch(event.target.value || "");
+    });
+
+    discountForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const payload = {
+        name: nameInput.value.trim(),
+        type: typeInput.value,
+        value: Number(valueInput.value || 0),
+        active: activeInput.value === "true"
+      };
+
+      if (!payload.name) {
+        setStatus("Discount name is required.", true);
+        return;
+      }
+      if (!(payload.value >= 0)) {
+        setStatus("Discount value must be 0 or higher.", true);
+        return;
+      }
+
+      if (endpointAvailable) {
+        try {
+          setStatus("Saving discount to API...", false);
+          const response = await fetch(API_DISCOUNTS, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          if (!response.ok) throw new Error(`POST failed (${response.status})`);
+          const created = await response.json().catch(() => payload);
+          discounts.unshift(normalizeDiscount(created));
+          setStatus("Discount saved via API.", false);
+        } catch (error) {
+          console.warn("POST failed, fallback to local.", error);
+          endpointAvailable = false;
+          const localItem = { ...payload, id: crypto.randomUUID() };
+          discounts.unshift(localItem);
+          saveLocalFallback(discounts);
+          setStatus("API save failed. Saved locally.", true);
+        }
+      } else {
+        const localItem = { ...payload, id: crypto.randomUUID() };
+        discounts.unshift(localItem);
+        saveLocalFallback(discounts);
+        setStatus("Discount saved locally.", false);
+      }
+
+      discountForm.reset();
+      typeInput.value = "percent";
+      activeInput.value = "true";
+      applySearch(searchInput.value || "");
+    });
+
+    resetBtn.addEventListener("click", () => {
+      discountForm.reset();
+      typeInput.value = "percent";
+      activeInput.value = "true";
+      setStatus("", false);
+    });
+
+    function applySearch(keyword) {
+      const q = String(keyword).toLowerCase().trim();
+      filteredDiscounts = discounts.filter((d) =>
+        String(d.name).toLowerCase().includes(q)
+      );
+      renderTable();
+    }
+
+    function renderTable() {
+      discountTableBody.innerHTML = "";
+      if (!filteredDiscounts.length) {
+        emptyState.style.display = "block";
+        emptyState.textContent = "No discounts found.";
+        return;
+      }
+
+      emptyState.style.display = "none";
+      filteredDiscounts.forEach((discount) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${escapeHtml(discount.name)}</td>
+          <td>${escapeHtml(discount.type)}</td>
+          <td>${formatDiscountValue(discount)}</td>
+          <td>${discount.active ? "Yes" : "No"}</td>
+        `;
+        discountTableBody.appendChild(row);
+      });
+    }
+
+    function normalizeDiscounts(list) {
+      return list.map(normalizeDiscount);
+    }
+
+    function normalizeDiscount(item) {
+      return {
+        id: item.id ?? item.discount_id ?? crypto.randomUUID(),
+        name: item.name ?? item.discount_name ?? "Unnamed",
+        type: item.type ?? "percent",
+        value: Number(item.value ?? item.discount_value ?? 0),
+        active: Boolean(item.active ?? item.is_active ?? true)
+      };
+    }
+
+    function formatDiscountValue(discount) {
+      if (discount.type === "percent") return `${Number(discount.value).toFixed(2)}%`;
+      return `PHP ${Number(discount.value).toFixed(2)}`;
+    }
+
+    function getInitialStaticDiscounts() {
+      return [
+        { id: "d1", name: "Senior Citizen", type: "percent", value: 20, active: true },
+        { id: "d2", name: "PWD", type: "percent", value: 20, active: true },
+        { id: "d3", name: "Promo 100 Off", type: "fixed", value: 100, active: false }
+      ];
+    }
+
+    function loadLocalFallback() {
+      try {
+        const raw = localStorage.getItem(LOCAL_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? normalizeDiscounts(parsed) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveLocalFallback(data) {
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
+    }
+
+    function setStatus(message, isError) {
+      statusText.textContent = message;
+      statusText.className = `status ${isError ? "err" : "ok"}`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = String(text ?? "");
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
