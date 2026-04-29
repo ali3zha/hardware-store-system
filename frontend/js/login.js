@@ -20,13 +20,16 @@
     return;
   }
 
-  const DEMO_EMAIL = "admin@hardware.com";
+  // Treat the login field as a "username" (NOT an email).
+  // You can change these demo usernames/passwords anytime.
+  const DEMO_USER_1 = "admin@hardware.com";
+  const DEMO_USER_2 = "staff1";
   const DEMO_PASSWORD = "admin123";
   const REMEMBER_KEY = "hardwareStoreRememberedEmail";
   const SESSION_KEY = "hardwareStoreAuthUser";
 
   const params = new URLSearchParams(window.location.search);
-  const redirectTo = sanitizeRedirect(params.get("redirect")) || "./customer.html";
+  const redirectTo = sanitizeRedirect(params.get("redirect")) || "./index.html";
 
   initRememberedEmail();
   emailInput.focus();
@@ -42,37 +45,32 @@
     setLoading(true);
     setStatus("", false);
 
-    const email = emailInput.value.trim().toLowerCase();
+    const username = String(emailInput.value || "").trim();
     const password = passwordInput.value;
 
-    if (!email || !password) {
-      setStatus("Please enter both email and password.", true);
-      setLoading(false);
-      return;
-    }
-
-    if (!isValidEmail(email)) {
-      setStatus("Please enter a valid email address.", true);
+    if (!username || !password) {
+      setStatus("Please enter both username and password.", true);
       setLoading(false);
       return;
     }
 
     // Demo auth. Replace this block with API auth if backend login is ready.
-    if (email !== DEMO_EMAIL || password !== DEMO_PASSWORD) {
+    const u = username.toLowerCase();
+    if ((u !== DEMO_USER_1.toLowerCase() && u !== DEMO_USER_2.toLowerCase()) || password !== DEMO_PASSWORD) {
       setStatus("Invalid email or password.", true);
       setLoading(false);
       return;
     }
 
     const authUser = {
-      email,
+      username: u,
       loginAt: new Date().toISOString()
     };
 
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(authUser));
 
     if (rememberMeInput.checked) {
-      localStorage.setItem(REMEMBER_KEY, email);
+      localStorage.setItem(REMEMBER_KEY, u);
     } else {
       localStorage.removeItem(REMEMBER_KEY);
     }
@@ -91,10 +89,6 @@
     rememberMeInput.checked = true;
   }
 
-  function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
-
   function setStatus(message, isError) {
     statusText.textContent = message;
     statusText.className = `status ${isError ? "err" : "ok"}`;
@@ -111,6 +105,7 @@
 
     const normalized = path.replace(/^\.\//, "");
     const allowed = new Set([
+      "index.html",
       "customer.html",
       "pos.html",
       "discount.html",
