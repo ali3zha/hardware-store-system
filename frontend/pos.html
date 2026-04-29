@@ -5,63 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hardware Store - POS</title>
   <link rel="stylesheet" href="./css/fe2.css" />
-  <style>
-    .top-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .stack {
-      display: grid;
-      gap: 12px;
-    }
-
-    .inline-field {
-      display: grid;
-      grid-template-columns: 130px 1fr;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .qty-input {
-      max-width: 80px;
-      padding: 7px 8px;
-    }
-
-    .summary {
-      display: grid;
-      gap: 6px;
-      margin-top: 10px;
-    }
-
-    .summary div {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-    }
-
-    .summary .grand {
-      font-size: 18px;
-      font-weight: 700;
-      margin-top: 4px;
-    }
-
-    .status-box {
-      margin-top: 12px;
-    }
-
-    @media (max-width: 920px) {
-      .top-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .inline-field {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
 </head>
 <body>
   <div class="topbar">
@@ -123,7 +66,7 @@
         <div class="summary">
           <div><span>Subtotal</span><strong id="subtotalText">PHP 0.00</strong></div>
           <div><span>Discount</span><strong id="discountText">PHP 0.00</strong></div>
-          <div><span>Tax (12%)</span><strong id="taxText">PHP 0.00</strong></div>
+          <div><span>Tax</span><strong id="taxText">PHP 0.00</strong></div>
           <div class="grand"><span>Total</span><strong id="totalText">PHP 0.00</strong></div>
           <div><span>Change</span><strong id="changeText">PHP 0.00</strong></div>
         </div>
@@ -139,7 +82,7 @@
       </section>
     </div>
 
-    <section class="card">
+    <section class="card" style="margin-top: 16px;">
       <h2>Cart Table</h2>
       <div class="table-wrap">
         <table>
@@ -160,6 +103,19 @@
     </section>
   </div>
 
+  <script src="./js/pos.js"></script>
+</body>
+</html>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hardware Store - Discounts</title>
+  <link rel="stylesheet" href="./css/fe2.css" />
+  
+  </section>
+  </div>
   <script>
     const API_PRODUCTS = "/api/products";
     const API_SALES = "/api/sales";
