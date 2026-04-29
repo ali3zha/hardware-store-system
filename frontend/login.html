@@ -10,25 +10,25 @@
 <body>
   <main class="login-page">
     <section class="login-card card">
-      <h1 style="text-align:center;">Welcome Back</h1>
-      <p style="text-align:center;">Sign in to Hardware Store System</p>
+      <h1 class="title" style="text-align:center;">Welcome Back</h1>
+      <p class="subtitle" style="text-align:center;">Sign in to Hardware Store System</p>
 
       <form id="loginForm">
         <div class="field">
-          <label>Username</label>
-          <input id="username" type="text" placeholder="Enter your username" required />
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" placeholder="Enter your username" required />
         </div>
 
         <div class="field">
-          <label>Password</label>
-          <input id="password" type="password" placeholder="Enter your password" required />
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="Enter your password" required />
         </div>
 
-        <button id="loginBtn" type="submit" class="btn" style="width:100%; margin-top:14px;">
+        <button class="btn" id="loginBtn" type="submit" style="width:100%; margin-top:14px;">
           Login
         </button>
 
-        <p id="status"></p>
+        <p id="status" class="status"></p>
       </form>
     </section>
   </main>
