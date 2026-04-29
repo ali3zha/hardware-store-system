@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<<<<<<< Updated upstream
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stock Movements | NAILed IT</title>
@@ -33,35 +34,71 @@
       <div style="display: flex; gap: 15px; flex-wrap: wrap;">
         <div style="flex: 2; min-width: 200px;">
           <input id="movementSearch" type="text" placeholder="Search by Product Name or ID..." style="width: 100%; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
+=======
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Movements | NAILed IT</title>
+    <link rel="stylesheet" href="css/fe1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <h2>NAIL<span>ed</span> IT</h2>
+>>>>>>> Stashed changes
         </div>
-        <select id="typeFilter" style="flex: 1; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
-          <option value="">All Types</option>
-          <option value="Restock">Restock</option>
-          <option value="Sale">Sale</option>
-          <option value="Adjustment">Adjustment</option>
-        </select>
-      </div>
+        <ul>
+            <li><a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a></li>
+            <li><a href="pos.html"><i class="fas fa-cash-register"></i> Go to POS</a></li>
+            <li><a href="product.html"><i class="fas fa-tools"></i> Manage Products</a></li>
+            <li><a href="category.html"><i class="fas fa-layer-group"></i> Category</a></li>
+            <li><a href="transactions.html"><i class="fas fa-receipt"></i> View Transactions</a></li>
+            <li><a href="stock-movements.html" class="active"><i class="fas fa-exchange-alt"></i> View Stock Movements</a></li>
+            <li><a href="logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
     </div>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Product Details</th>
-            <th>Type</th>
-            <th>Qty Change</th>
-            <th>Price</th>
-            <th>Reason</th>
-            <th>Date & Time</th>
-          </tr>
-        </thead>
-        <tbody id="movementTableBody">
-          </tbody>
-      </table>
-    </div>
-  </div>
+    <div class="page" style="margin-left: 260px; padding: 40px;">
+        <div class="page-header">
+            <h1>Stock Movements</h1>
+            <p>Tracking inventory flow in Philippine Pesos (₱).</p>
+        </div>
 
-  <script src="js/stock-movements.js"></script>
+        <div class="card" style="padding: 20px; background: white; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div style="flex: 2; min-width: 250px;">
+                    <input id="movementSearch" type="text" placeholder="Search by Product Name or ID..." 
+                           style="width: 100%; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; font-size: 14px;">
+                </div>
+                <select id="typeFilter" style="flex: 1; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; font-size: 14px; background: white;">
+                    <option value="">All Types</option>
+                    <option value="Restock">Restock</option>
+                    <option value="Sale">Sale</option>
+                    <option value="Adjustment">Adjustment</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-wrap" style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8fafc; text-align: left; border-bottom: 2px solid #f1f5f9;">
+                        <th style="padding: 15px;">ID</th>
+                        <th>PRODUCT DETAILS</th>
+                        <th>TYPE</th>
+                        <th>QTY CHANGE</th>
+                        <th>PRICE</th>
+                        <th>REASON</th>
+                        <th>DATE & TIME</th>
+                    </tr>
+                </thead>
+                <tbody id="movementTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="js/stock-movements.js"></script>
 </body>
 </html>
