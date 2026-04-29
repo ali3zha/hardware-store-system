@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NAILED IT | Transactions</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Base theme (sidebar/main/table styles) -->
+  <link rel="stylesheet" href="./css/style.css" />
+  <!-- Page-specific (filters/status pills) -->
+  <link rel="stylesheet" href="./css/fe2.css" />
+</head>
+
+<body>
+  <div class="sidebar">
+    <h2>NAILED<span>IT</span></h2>
+    <ul>
+      <li><a href="./index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+      <li><a href="./pos.html"><i class="fas fa-cash-register"></i> Go to POS</a></li>
+      <li><a href="./product.html"><i class="fas fa-tools"></i> Manage Products</a></li>
+      <li><a href="./transactions.html" class="active"><i class="fas fa-receipt"></i> View Transactions</a></li>
+      <li><a href="./stock-movements.html"><i class="fas fa-right-left"></i> View Stock Movements</a></li>
+      <li>
+        <a href="./login.html" id="logoutLink">
+          <i class="fas fa-right-from-bracket"></i> Logout
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <div>
+        <h1>Transactions</h1>
+        <p>Sales history (includes payment method and status).</p>
+      </div>
+    </div>
+
+    <section class="table-section">
+      <div class="table-header">
+        <h3>Sales History</h3>
+
+        <div class="filters">
+          <label>
+            From:
+            <input type="date" id="fromDate" />
+          </label>
+          <label>
+            To:
+            <input type="date" id="toDate" />
+          </label>
+          <button class="btn-filter" id="applyFilterBtn" type="button">Apply</button>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Sale ID</th>
+            <th>Date</th>
+            <th>User / Cashier</th>
+            <th>Total</th>
+            <th>Payment Method</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="transactionsBody">
+          <!-- filled by transactions.js -->
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    document.getElementById("logoutLink")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "./login.html";
+    });
+  </script>
+
+  <script src="./js/transactions.js"></script>
+</body>
+</html>
