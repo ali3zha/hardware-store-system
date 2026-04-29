@@ -59,13 +59,6 @@ textarea {
   color: var(--text);
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.18);
-}
-
 .input-sm {
   max-width: 110px;
   padding: 7px 8px;
@@ -531,6 +524,51 @@ input {
   opacity: 0.92;
 }
 
+.tx-filter-row {
+  display: flex;
+  gap: 10px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-group label {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.ghost-btn {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.small-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 7px 10px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.small-btn:hover {
+  opacity: 0.92;
+}
+
+.tag-warn {
+  background: #fef3c7;
+  color: #92400e;
+}
+
 /* Optional: tiny modal-like alert fallback style consistency handled in JS alert */
 /* FIX LOGIN PAGE */
 .login-page {
@@ -617,4 +655,63 @@ input {
   padding: 6px 10px !important;
   font-size: 13px !important;
   border-radius: 8px !important;
+}
+
+/* ===== POS INPUT + SPACING HOTFIX (add this at bottom) ===== */
+
+/* make POS containers/inputs white */
+.pos-grid .panel,
+.pos-grid .panel * {
+  box-sizing: border-box;
+}
+
+.pos-grid .panel {
+  background: #ffffff !important;
+}
+
+.pos-grid input,
+.pos-grid select,
+.pos-grid textarea {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  height: 40px !important;
+  padding: 8px 10px !important;
+  margin-top: 6px !important;
+}
+
+.pos-grid input::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* keep Add / Checkout buttons orange */
+.pos-grid .btn {
+  background: #ee4d2d !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/* spacing between form fields and checkout button */
+.pos-grid .form-grid {
+  margin-top: 14px !important;
+  margin-bottom: 14px !important;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pos-grid .form-grid .full {
+  grid-column: 1 / -1;
+}
+
+/* keep checkout button away from inputs */
+#checkoutBtn {
+  margin-top: 8px !important;
+}
+
+/* optional: cleaner cart totals spacing */
+.pos-grid .totals {
+  margin-top: 12px !important;
+  margin-bottom: 10px !important;
 }

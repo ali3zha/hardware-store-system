@@ -42,12 +42,6 @@ function normalizeRow(raw) {
     total_amount: raw.total_amount ?? raw.total ?? 0,
     payment_method: raw.payment_method ?? "N/A",
     status: raw.status ?? "pending",
-    items: raw.items || [],
-    amount_tendered: raw.amount_tendered,
-    change_given: raw.change_given,
-    subtotal: raw.subtotal,
-    discount_amount: raw.discount_amount,
-    tax_amount: raw.tax_amount,
   };
 }
 
@@ -85,9 +79,13 @@ function renderRows(rows) {
       const tx = allTransactions.find((t) => String(t.sale_id) === String(id));
       if (!tx) return;
 
-      // Save for receipt page
       localStorage.setItem("lastSale", JSON.stringify(tx));
-      window.location.href = "./receipt.html";
+
+      alert(
+        `Sale ID: ${tx.sale_id}\nDate: ${safeDate(tx.sale_date)}\nCashier: ${tx.user_display}\nTotal: ₱ ${money(
+          tx.total_amount
+        )}\nPayment: ${tx.payment_method}\nStatus: ${tx.status}`
+      );
     });
   });
 }
@@ -127,14 +125,14 @@ async function loadTransactions() {
   txMessage.textContent = "Loading transactions...";
 
   try {
-    const data = await window.API.get("/sales"); // requires backend endpoint
+    // uses shared helper from api.js
+    const data = await window.API.get("/sales");
     const rows = Array.isArray(data.data) ? data.data : [];
     allTransactions = rows.map(normalizeRow);
 
     renderRows(allTransactions);
     txMessage.textContent = `Loaded ${allTransactions.length} transaction(s) from API.`;
   } catch (err) {
-    // fallback mock if endpoint not ready
     allTransactions = [
       {
         sale_id: 1001,
@@ -163,8 +161,7 @@ async function loadTransactions() {
     ];
 
     renderRows(allTransactions);
-    txMessage.textContent =
-      "GET /api/sales not available yet. Showing temporary mock data.";
+    txMessage.textContent = "GET /api/sales not available yet. Showing temporary mock data.";
   }
 }
 

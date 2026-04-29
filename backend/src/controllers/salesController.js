@@ -2,6 +2,32 @@ const pool = require("../config/db");
 const { ok, fail } = require("../utils/response");
 const { computeTotals } = require("../services/salesService");
 
+exports.getSales = async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `SELECT
+         sale_id,
+         user_id,
+         customer_id,
+         sale_date,
+         subtotal,
+         discount_amount,
+         tax_amount,
+         total_amount,
+         payment_method,
+         amount_tendered,
+         change_given,
+         status
+       FROM sales
+       ORDER BY sale_date DESC`
+    );
+
+    return ok(res, rows, "Sales fetched successfully");
+  } catch (err) {
+    return fail(res, err.message, 500);
+  }
+};
+
 exports.createSale = async (req, res) => {
   const conn = await pool.getConnection();
 
@@ -29,6 +55,7 @@ exports.createSale = async (req, res) => {
     // Load product prices/stocks
     const productIds = items.map((i) => i.product_id);
     const placeholders = productIds.map(() => "?").join(",");
+
     const [products] = await conn.query(
       `SELECT product_id, selling_price, stock_qty FROM product WHERE product_id IN (${placeholders})`,
       productIds
@@ -41,6 +68,7 @@ exports.createSale = async (req, res) => {
       if (!p) throw new Error(`Product ${item.product_id} not found`);
       if (Number(item.quantity) <= 0) throw new Error(`Invalid quantity for product ${item.product_id}`);
       if (p.stock_qty < item.quantity) throw new Error(`Insufficient stock for product ${item.product_id}`);
+
       return {
         product_id: item.product_id,
         quantity: Number(item.quantity),
