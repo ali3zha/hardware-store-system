@@ -3,100 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stock Movements</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Stock Movements | NAILed IT</title>
   <link rel="stylesheet" href="css/fe1.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+
   <div class="sidebar">
-    <h2>NAILED<span>IT</span></h2>
+    <div class="logo">
+      <h2>NAIL<span>ed</span> IT</h2>
+    </div>
     <ul>
-      <li><a href="./index.html"><i class="fas fa-home"></i> Dashboard</a></li>
-      <li><a href="./Product.html"><i class="fas fa-tools"></i> Manage Products</a></li>
-      <li><a href="./category.html"><i class="fas fa-list-ul"></i> Categories</a></li>
-      <li><a href="./supplier.html"><i class="fas fa-shipping-fast"></i> Suppliers</a></li>
-      <li><a href="./stock-movements.html" class="active"><i class="fas fa-right-left"></i> Stock Movements</a></li>
+      <li><a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a></li>
+      <li><a href="pos.html"><i class="fas fa-cash-register"></i> Go to POS</a></li>
+      <li><a href="product.html"><i class="fas fa-tools"></i> Manage Products</a></li>
+      <li><a href="transactions.html"><i class="fas fa-receipt"></i> View Transactions</a></li>
+      <li><a href="stock-movements.html" class="active"><i class="fas fa-exchange-alt"></i> View Stock Movements</a></li>
+      <li><a href="logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
     </ul>
   </div>
 
   <div class="page">
     <div class="page-header">
-      <div>
-        <h1>Stock Movements</h1>
-        <p>Monitor incoming and outgoing inventory with a cleaner movement history view.</p>
-      </div>
+      <h1>Stock Movements</h1>
+      <p>Tracking inventory flow in Philippine Pesos (₱).</p>
     </div>
 
-    <div class="hero">
-      <div class="hero-card">
-        <span class="eyebrow">Inventory Activity</span>
-        <div class="hero-copy">
-          <h1>Track every stock change with better visual hierarchy.</h1>
-          <p>Filter movement records by type and date, then review the full audit trail in a polished layout.</p>
+    <div class="card" style="padding: 15px; margin-bottom: 25px;">
+      <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <div style="flex: 2; min-width: 200px;">
+          <input id="movementSearch" type="text" placeholder="Search by Product Name or ID..." style="width: 100%; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
         </div>
-      </div>
-
-      <div class="highlight-card">
-        <h3>Movement Snapshot</h3>
-        <div class="mini-list">
-          <div class="mini-item"><strong>Stock In</strong><span class="mini-value">38</span></div>
-          <div class="mini-item"><strong>Stock Out</strong><span class="mini-value">24</span></div>
-          <div class="mini-item"><strong>Adjustments</strong><span class="mini-value">6</span></div>
-        </div>
+        <select id="typeFilter" style="flex: 1; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
+          <option value="">All Types</option>
+          <option value="Restock">Restock</option>
+          <option value="Sale">Sale</option>
+          <option value="Adjustment">Adjustment</option>
+        </select>
       </div>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
-        <h3>Incoming</h3>
-        <p>38</p>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-arrow-trend-down"></i></div>
-        <h3>Outgoing</h3>
-        <p>24</p>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-clock-rotate-left"></i></div>
-        <h3>Recent Logs</h3>
-        <p>68</p>
-      </div>
-    </div>
-
-    <div class="actions">
-      <select id="typeFilter">
-        <option value="">All Types</option>
-        <option value="IN">IN</option>
-        <option value="OUT">OUT</option>
-        <option value="ADJUSTMENT">ADJUSTMENT</option>
-      </select>
-      <input id="startDate" type="date">
-      <input id="endDate" type="date">
-      <button id="filterBtn" type="button">Apply Filter</button>
-    </div>
-
-    <p id="movementError" class="error"></p>
     <div class="table-wrap">
-      <div class="table-head">
-        <div>
-          <h2>Movement History</h2>
-          <p>Readable table for stock-ins, stock-outs, and adjustments.</p>
-        </div>
-      </div>
       <table>
         <thead>
           <tr>
-            <th>Movement ID</th>
-            <th>Product ID</th>
-            <th>Product Name</th>
+            <th>ID</th>
+            <th>Product Details</th>
             <th>Type</th>
-            <th>Qty</th>
+            <th>Qty Change</th>
+            <th>Price</th>
             <th>Reason</th>
-            <th>Moved At</th>
+            <th>Date & Time</th>
           </tr>
         </thead>
-        <tbody id="movementTableBody"></tbody>
+        <tbody id="movementTableBody">
+          </tbody>
       </table>
     </div>
   </div>

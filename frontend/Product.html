@@ -3,134 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Products</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Products | NAILed IT</title>
   <link rel="stylesheet" href="css/fe1.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+
   <div class="sidebar">
-    <h2>NAILED<span>IT</span></h2>
+    <h2>NAIL<span>ed</span> IT</h2>
     <ul>
-      <li><a href="./index.html"><i class="fas fa-home"></i> Dashboard</a></li>
-      <li><a href="./Product.html" class="active"><i class="fas fa-tools"></i> Manage Products</a></li>
-      <li><a href="./category.html"><i class="fas fa-list-ul"></i> Categories</a></li>
-      <li><a href="./supplier.html"><i class="fas fa-shipping-fast"></i> Suppliers</a></li>
-      <li><a href="./stock-movements.html"><i class="fas fa-right-left"></i> Stock Movements</a></li>
+      <li><a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a></li>
+      <li><a href="pos.html"><i class="fas fa-cash-register"></i> Go to POS</a></li>
+      <li><a href="product.html" class="active"><i class="fas fa-tools"></i> Manage Products</a></li>
+      <li><a href="transactions.html"><i class="fas fa-receipt"></i> View Transactions</a></li>
+      <li><a href="stock-movements.html"><i class="fas fa-exchange-alt"></i> View Stock Movements</a></li>
+      <li><a href="logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
     </ul>
   </div>
 
   <div class="page">
     <div class="page-header">
-      <div>
-        <h1>Products</h1>
-        <p>Manage your hardware inventory with clean search, filters, and stock alerts.</p>
-      </div>
-    </div>
-
-    <div class="hero">
-      <div class="hero-card">
-        <span class="eyebrow">Inventory Control</span>
-        <div class="hero-copy">
-          <h1>Show products in a way customers and panelists will like.</h1>
-          <p>Highlight product details, monitor stock levels, and keep the catalog looking professional with images and clean table styling.</p>
-        </div>
-        <div class="hero-actions">
-          <button type="button" onclick="document.getElementById('productName').focus()">Add Product</button>
-          <a href="./stock-movements.html" class="btn-secondary">View Movements</a>
-        </div>
-      </div>
-
-      <div class="highlight-card">
-        <h3>Best Sellers Today</h3>
-        <div class="mini-list">
-          <div class="mini-item">
-            <div>
-              <strong>Claw Hammer 16oz</strong>
-              <small>Hand Tools</small>
-            </div>
-            <span class="mini-value">125 pcs</span>
-          </div>
-          <div class="mini-item">
-            <div>
-              <strong>Boysen Latex White</strong>
-              <small>Paints</small>
-            </div>
-            <span class="mini-value">84 cans</span>
-          </div>
-          <div class="mini-item">
-            <div>
-              <strong>PVC Pipe 1/2"</strong>
-              <small>Plumbing</small>
-            </div>
-            <span class="mini-value">46 pcs</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-boxes-stacked"></i></div>
-        <h3>Total Products</h3>
-        <p>248</p>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-triangle-exclamation"></i></div>
-        <h3>Low Stock Alerts</h3>
-        <p>12</p>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-tags"></i></div>
-        <h3>Active Categories</h3>
-        <p>18</p>
-      </div>
-    </div>
-
-    <div class="actions">
-      <input id="searchInput" type="text" placeholder="Search product name...">
-      <select id="categoryFilter">
-        <option value="">All Categories</option>
-      </select>
-      <select id="supplierFilter">
-        <option value="">All Suppliers</option>
-      </select>
+      <h1>Inventory Management</h1>
+      <p>Manage your hardware products and pricing in Pesos (₱).</p>
     </div>
 
     <div class="card">
-      <h2>Add / Edit Product</h2>
+      <h2 style="margin-bottom: 20px;"><i class="fas fa-plus-circle"></i> Add / Edit Product</h2>
       <form id="productForm" class="form-grid">
-        <input id="productName" placeholder="Product name" required>
+        <input id="productName" placeholder="Product Name" required>
         <input id="productSku" placeholder="SKU" required>
-        <input id="productPrice" type="number" step="0.01" min="0" placeholder="Price" required>
-        <input id="productStock" type="number" min="0" placeholder="Stock qty" required>
-        <input id="productLowThreshold" type="number" min="0" placeholder="Low-stock threshold" value="10" required>
-        <select id="productCategory" required>
-          <option value="">Select category</option>
-        </select>
-        <select id="productSupplier" required>
-          <option value="">Select supplier</option>
-        </select>
-        <button type="submit" id="submitBtn">Add Product</button>
+        <div class="currency-input">
+          <span class="currency-symbol">₱</span>
+          <input id="productPrice" type="number" step="0.01" placeholder="0.00" required>
+        </div>
+        <input id="productStock" type="number" placeholder="Stock Qty" required>
+        <input id="productLowThreshold" type="number" value="10" placeholder="Alert Level">
+        <select id="productCategory" required><option value="">Category</option></select>
+        <select id="productSupplier" required><option value="">Supplier</option></select>
+        <button type="submit" id="submitBtn">Save Product</button>
       </form>
-      <p id="productError" class="error"></p>
     </div>
 
     <div class="table-wrap">
-      <div class="table-head">
-        <div>
-          <h2>Product Inventory List</h2>
-          <p>Visual product rows with status highlighting for better presentation.</p>
-        </div>
-      </div>
-
       <table>
         <thead>
           <tr>
             <th>Product</th>
             <th>SKU</th>
             <th>Category</th>
-            <th>Supplier</th>
-            <th>Price</th>
+            <th>Price (₱)</th>
             <th>Stock</th>
             <th>Status</th>
             <th>Action</th>
