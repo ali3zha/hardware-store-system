@@ -1,106 +1,58 @@
-:root {
-  /* Orange + black theme */
-  --bg: #07070b;
-  --bg-soft: #0f1018;
-  --card: #0f1016;
-  --text: #f3f4f6;
-  --muted: #ff5900;
-  --border: #ff8e32;
-  --primary: #ff7a00;
-  --primary-dark: #e46a00;
-  --warning: #ff9f2f;
-  --danger: #b3873a;
-  --danger-dark: #fa9595;
-  --success: #23c55e;
-  --info: #ffba43;
-  --radius: 12px;
-  --shadow: 0 18px 38px rgba(0, 0, 0, 0.45);
-  --shadow-sm: 0 10px 20px rgba(0, 0, 0, 0.35);
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-body {
-  background: radial-gradient(1000px 520px at 12% 0%, rgba(255, 122, 0, 0.22) 0%, rgba(255, 122, 0, 0) 55%),
-    radial-gradient(800px 420px at 95% 20%, rgba(34, 211, 238, 0.10) 0%, rgba(34, 211, 238, 0) 60%),
-    linear-gradient(160deg, #07070b 0%, #0a0a12 35%, #06060a 100%);
-  color: var(--text);
-  min-height: 100vh;
-  line-height: 1.45;
-}
-
 .container {
   width: min(1200px, 94%);
   margin: 24px auto;
 }
 
-h1,
-h2,
-h3 {
-  line-height: 1.2;
+/* Sidebar Styling */
+.sidebar {
+  width: 260px;
+  background: var(--sidebar-bg);
+  height: 100vh;
+  color: white;
+  position: fixed;
+  padding: 25px 20px;
+  box-sizing: border-box;
+  border-right: 2px solid var(--orange);
 }
 
-h1 {
-  font-size: 28px;
-  margin-bottom: 16px;
-  color: #f7b267;
+.sidebar h2 {
+  color: var(--orange);
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin-bottom: 40px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
 }
 
-h2 {
-  font-size: 20px;
+.sidebar h2 span {
+  color: white;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
   margin-bottom: 12px;
 }
 
-.topbar {
-  background: rgba(15, 16, 24, 0.92);
-  border-bottom: 1px solid #202231;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
-
-.topbar-inner {
-  width: min(1200px, 94%);
-  margin: 0 auto;
-  min-height: 62px;
+.sidebar ul li a {
+  color: #94a3b8;
+  text-decoration: none;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 15px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  transition: 0.3s;
+  font-weight: 500;
 }
 
-.brand {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.nav {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.nav a {
-  text-decoration: none;
-  font-size: 13px;
-  color: var(--text);
-  border: 1px solid #2b2f42;
-  border-radius: 999px;
-  padding: 6px 10px;
-  background: rgba(16, 16, 25, 0.7);
-}
-
-.nav a:hover,
-.nav a.active {
-  border-color: rgba(255, 122, 0, 0.6);
-  background: rgba(255, 122, 0, 0.12);
-  color: #ffd4ad;
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+  background: rgba(238, 77, 45, 0.15);
+  color: var(--orange);
 }
 
 .card {
@@ -420,3 +372,215 @@ tbody tr:hover {
     border: none;
   }
 }
+
+.pos-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+  padding: 16px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border-bottom: 1px solid #f1f5f9;
+  padding: 10px 8px;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  margin-top: 6px;
+}
+
+.btn {
+  background: #ee4d2d;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.btn.primary {
+  background: #ee4d2d;
+}
+
+.btn.full {
+  width: 100%;
+}
+
+.btn:hover {
+  opacity: 0.93;
+}
+
+.totals {
+  margin-top: 12px;
+  border: 1px solid #f1f5f9;
+  border-radius: 14px;
+  padding: 12px;
+  background: #fbfdff;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  color: #334155;
+}
+
+.total-row {
+  border-top: 1px solid #e2e8f0;
+  margin-top: 6px;
+  padding-top: 12px;
+  font-size: 1.05rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.message {
+  margin-top: 10px;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .pos-grid { grid-template-columns: 1fr; }
+}
+
+/* Transactions page */
+
+/* Transactions page additions only (keeps sidebar + base style.css consistent) */
+
+.transactions-header {
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-wrap {
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-group label {
+  display: flex;
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.filter-group input[type="date"] {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  background: #fff;
+  min-width: 140px;
+}
+
+.ghost-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ghost-btn:hover {
+  background: #f1f5f9;
+}
+
+.tx-message {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.status-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  display: inline-block;
+}
+
+.status-completed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-pending {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.status-cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.details-btn {
+  background: #0f172a;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 12px;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+
+.details-btn:hover {
+  opacity: 0.92;
+}
+
+/* Optional: tiny modal-like alert fallback style consistency handled in JS alert */
