@@ -7,50 +7,49 @@
 
   if (!form) return;
 
-  const USERS = [
-    { username: "admin", password: "password123" },
-    { username: "staff", password: "hihihi01" },
-    { username: "inventory", password: "hahaha02" },
-    { username: "staff1", password: "huhuhu03" }
-  ];
-
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const username = usernameInput.value.trim().toLowerCase();
-    const password = passwordInput.value;
+    const password = passwordInput.value.trim();
 
-    btn.disabled = true;
-    btn.textContent = "Signing in...";
+    setLoading(true);
+    setStatus("");
 
     if (!username || !password) {
-      show("Fill all fields", true);
-      reset();
+      setStatus("Please fill all fields", true);
+      setLoading(false);
       return;
     }
 
-    const user = USERS.find(u => u.username === username && u.password === password);
+    // 🔥 MULTIPLE USERS
+    if (
+      (username === "admin" && password === "password123") ||
+      (username === "staff" && password === "hihihi01") ||
+      (username === "inventory" && password === "hahaha02") ||
+      (username === "staff1" && password === "huhuhu03")
+    ) {
+      sessionStorage.setItem("hardwareStoreAuthUser", JSON.stringify({ username }));
 
-    if (!user) {
-      show("Invalid login", true);
-      reset();
-      return;
+      setStatus("Login successful. Redirecting...", false);
+
+      setTimeout(() => {
+        window.location.href = "./index.html";
+      }, 500);
+
+    } else {
+      setStatus("Invalid username or password", true);
+      setLoading(false);
     }
-
-    show("Success! Redirecting...", false);
-
-    setTimeout(() => {
-      window.location.href = "./index.html";
-    }, 500);
   });
 
-  function show(msg, err) {
+  function setStatus(msg, err) {
     status.textContent = msg;
-    status.style.color = err ? "red" : "lime";
+    status.className = err ? "status err" : "status ok";
   }
 
-  function reset() {
-    btn.disabled = false;
-    btn.textContent = "Login";
+  function setLoading(loading) {
+    btn.disabled = loading;
+    btn.textContent = loading ? "Signing in..." : "Login";
   }
 })();

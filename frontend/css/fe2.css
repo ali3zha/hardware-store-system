@@ -532,73 +532,90 @@ input {
 }
 
 /* Optional: tiny modal-like alert fallback style consistency handled in JS alert */
-
-/* CUSTOMER PAGE */
-.customer-header {
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.customer-controls {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.customer-controls input {
-  min-width: 240px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 9px 12px;
-}
-
-.customer-form-wrap {
-  background: #f8fafc;
-  border: 1px solid #eef2f7;
-  border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 16px;
-}
-
-.customer-form-wrap h4 {
-  margin: 0 0 10px 0;
-  color: #0f172a;
-}
-
-.customer-form-grid {
+/* FIX LOGIN PAGE */
+.login-page {
+  min-height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr auto;
-  gap: 10px;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 122, 0, 0.20), transparent 35%),
+    #07070b;
 }
 
-.customer-form-grid input {
-  border: 1px solid #dbe3ec;
-  border-radius: 8px;
-  padding: 10px 12px;
+.login-card {
+  width: min(460px, 92%);
+  padding: 36px 28px;
+  background: #11121a;
+  border: 1px solid #25283a;
+  border-radius: 18px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
 }
 
-.customer-section table td {
-  vertical-align: middle;
+.login-card h1,
+.login-card .title {
+  color: #ffffff !important;
+  font-size: 34px;
+  margin-bottom: 12px;
+  text-align: center;
 }
 
-/* DISCOUNT PAGE */
-.discount-header {
-  gap: 16px;
-  flex-wrap: wrap;
+.login-card p,
+.login-card .subtitle {
+  color: #a8afc4 !important;
+  text-align: center;
+  margin-bottom: 24px;
 }
 
-.checkbox-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #334155;
-  font-size: 14px;
+.login-card label {
+  color: #d7dbea !important;
   font-weight: 600;
-  user-select: none;
+  margin-bottom: 8px;
 }
 
-.checkbox-wrap input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
+.login-card input {
+  width: 100%;
+  height: 48px;
+  background: #0b0c13 !important;
+  border: 1px solid #30354d !important;
+  border-radius: 10px;
+  padding: 0 14px;
+  color: #ffffff !important;
+  font-size: 15px;
+}
+
+.login-card input::placeholder {
+  color: #8f97ad;
+}
+
+.login-card input:focus {
+  border-color: #ff7a00 !important;
+  box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.25) !important;
+}
+
+.login-card .btn,
+#loginBtn {
+  width: 100%;
+  height: 48px;
+  margin-top: 18px;
+  background: #f04b2f !important;
+  color: #ffffff !important;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
   cursor: pointer;
+}
+
+.login-card .btn:hover,
+#loginBtn:hover {
+  background: #ff5a3d !important;
+}
+/* smaller input fields for login */
+.login-card input {
+  height: 38px !important;
+  padding: 6px 10px !important;
+  font-size: 13px !important;
+  border-radius: 8px !important;
+edd26e60f641d6ad13fa8177215672572e26b2b3
 }
