@@ -8,9 +8,7 @@
   <link rel="stylesheet" href="./css/style.css" />
   <link rel="stylesheet" href="./css/fe2.css" />
 </head>
-
 <body>
-  <!-- NAV (shared) -->
   <div class="sidebar">
     <h2>NAILED<span>IT</span></h2>
     <ul>
@@ -19,15 +17,10 @@
       <li><a href="./product.html"><i class="fas fa-tools"></i> Manage Products</a></li>
       <li><a href="./transactions.html"><i class="fas fa-receipt"></i> View Transactions</a></li>
       <li><a href="./stock-movements.html"><i class="fas fa-right-left"></i> View Stock Movements</a></li>
-      <li>
-        <a href="./login.html" id="logoutLink">
-          <i class="fas fa-right-from-bracket"></i> Logout
-        </a>
-      </li>
+      <li><a href="./login.html" id="logoutLink"><i class="fas fa-right-from-bracket"></i> Logout</a></li>
     </ul>
   </div>
 
-  <!-- Page content -->
   <div class="main">
     <div class="header">
       <div>
@@ -37,7 +30,6 @@
     </div>
 
     <div class="pos-grid">
-      <!-- PRODUCTS -->
       <section class="panel">
         <div class="panel-header">
           <h3>Products</h3>
@@ -59,7 +51,6 @@
         </table>
       </section>
 
-      <!-- CART -->
       <section class="panel">
         <div class="panel-header">
           <h3>Cart</h3>
@@ -98,16 +89,22 @@
 
           <label class="full">
             Amount Tendered
-            <input type="number" id="tenderedEl" min="0" step="0.01" required placeholder="e.g. 1000" />
+            <input type="number" id="tenderedEl" min="0" step="0.01" placeholder="e.g. 1000" />
           </label>
         </div>
 
-        <button class="btn primary full" id="checkoutBtn" type="button">Checkout</button>
+        <button class="btn full" id="checkoutBtn" type="button">Checkout</button>
         <p id="saleMessage" class="message"></p>
       </section>
     </div>
   </div>
 
+  <script>
+    document.getElementById("logoutLink")?.addEventListener("click", () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    });
+  </script>
   <script src="./js/pos.js"></script>
 </body>
 </html>
