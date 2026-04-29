@@ -154,6 +154,7 @@ textarea:focus {
   box-shadow: 0 0 0 4px rgba(238, 77, 45, 0.12);
 }
 
+ HEAD
 button,
 .btn {
   background: var(--orange);
@@ -162,6 +163,14 @@ button,
   cursor: pointer;
   font-weight: 800;
   transition: 0.2s ease;
+
+input, select, button {
+    padding: 12px;
+    border: 1px solid #1868d2;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    outline: none;
+ 60687c2796419485e1df3e251a550ffed271d3bf
 }
 
 button:hover,
@@ -345,7 +354,11 @@ tbody tr:hover {
 }
 
 .cat-card {
+<<<<<<< HEAD
   background: white;
+=======
+  background: #ffae79;
+>>>>>>> 60687c2796419485e1df3e251a550ffed271d3bf
   padding: 25px;
   border-radius: 18px;
   text-align: center;
@@ -355,7 +368,11 @@ tbody tr:hover {
 }
 
 .cat-card:hover {
+<<<<<<< HEAD
   border-color: var(--orange);
+=======
+  border-color: #f36f54;
+>>>>>>> 60687c2796419485e1df3e251a550ffed271d3bf
   transform: translateY(-5px);
 }
 
