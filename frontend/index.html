@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nailed It | Hardware Management</title>
+  <title>NAILed IT | Hardware Management</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="./css/style.css" />
 </head>
@@ -12,10 +12,12 @@
   <div class="sidebar">
     <h2>NAILED<span>IT</span></h2>
     <ul>
-      <li><a href="index.html" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
-      <li><a href="product.html"><i class="fas fa-tools"></i> Inventory</a></li>
-      <li><a href="category.html"><i class="fas fa-list-ul"></i> Categories</a></li>
-      <li><a href="supplier.html"><i class="fas fa-shipping-fast"></i> Suppliers</a></li>
+      <li><a href="./index.html" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+      <li><a href="./pos.html"><i class="fas fa-cash-register"></i> Go to POS</a></li>
+      <li><a href="./product.html"><i class="fas fa-tools"></i> Manage Products</a></li>
+      <li><a href="./transactions.html"><i class="fas fa-receipt"></i> View Transactions</a></li>
+      <li><a href="./stock-movements.html"><i class="fas fa-right-left"></i> View Stock Movements</a></li>
+      <li><a href="./login.html" id="logoutLink"><i class="fas fa-right-from-bracket"></i> Logout</a></li>
     </ul>
   </div>
 
@@ -23,10 +25,7 @@
     <div class="header">
       <div>
         <h1>Dashboard</h1>
-        <p>Welcome back! Here's what's happening at <b>Nailed It</b> today.</p>
-      </div>
-      <div class="admin-btn">
-        <i class="fas fa-user-shield"></i> Admin Panel <span class="admin-badge">AD</span>
+        <p>Welcome back! Here's what's happening at <b>NAILed IT</b> today.</p>
       </div>
     </div>
 
@@ -51,7 +50,7 @@
     <div class="table-section">
       <div class="table-header">
         <h3>Latest Stock Updates</h3>
-        <a href="product.html" class="view-link">Manage All Items</a>
+        <a href="./product.html" class="view-link">Manage All Items</a>
       </div>
       <table>
         <thead>
@@ -90,5 +89,12 @@
     </div>
   </div>
 
+  <script>
+    const logoutLink = document.getElementById("logoutLink");
+    logoutLink.addEventListener("click", function () {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    });
+  </script>
 </body>
 </html>
