@@ -420,3 +420,37 @@ tbody tr:hover {
     border: none;
   }
 }
+
+/* Navbar strong theme (POS/Header) */
+.topbar {
+  padding: 6px 0;
+}
+
+.topbar-inner {
+  padding: 0 8px;
+}
+
+.topbar .brand {
+  letter-spacing: 0.2px;
+}
+
+.topbar .nav {
+  align-items: center;
+}
+
+.topbar .nav a {
+  backdrop-filter: blur(6px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.topbar .nav a:hover {
+  transform: translateY(-1px);
+}
+
+.topbar .nav a.active {
+  background: rgba(255, 122, 0, 0.16) !important;
+  border-color: rgba(255, 122, 0, 0.75) !important;
+  color: #fff2df !important;
+  box-shadow: 0 16px 30px rgba(255, 122, 0, 0.12) !important;
+}
