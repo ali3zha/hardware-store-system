@@ -39,12 +39,31 @@
   color: #000000 !important;
 }
 
-.card, .table-wrap {
-    background: var(--white);
-    padding: 25px;
-    border-radius: 16px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+/* DASHBOARD CARDS */
+.card {
+  background: linear-gradient(135deg, #ff7a00, #ffae79);
+  color: #ffffff;
+  padding: 25px;
+  border-radius: 16px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 20px rgba(255, 122, 0, 0.2);
+}
+
+/* Keep table white */
+.table-wrap {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 16px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+/* Text inside cards */
+.card h1,
+.card h2,
+.card h3,
+.card p {
+  color: #ffffff;
 }
 
 /* Form Styling */
@@ -117,7 +136,7 @@ td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
 }
 
 .cat-card {
-  background: #fff;
+  background: #ffae79;
   padding: 25px;
   border-radius: 16px;
   text-align: center;
@@ -128,7 +147,7 @@ td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
 }
 
 .cat-card:hover {
-  border-color: #ee4d2d;
+  border-color: #f36f54;
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(238, 77, 45, 0.1);
 }
