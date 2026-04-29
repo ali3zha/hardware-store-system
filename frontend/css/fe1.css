@@ -21,7 +21,7 @@
 }
 
 .header p {
-  color: #64748b;
+  color: #ff9a41;
   margin: 5px 0 0;
   font-size: 1.1rem;
 }
@@ -56,7 +56,7 @@
 
 input, select, button {
     padding: 12px;
-    border: 1px solid #1868d2;
+    border: 1px solid #ff8e04;
     border-radius: 10px;
     font-size: 0.9rem;
     outline: none;
@@ -155,7 +155,7 @@ td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
 .inventory-table thead tr {
   text-align: left;
   background: #0f172a;
-  color: #fff;
+  color: #ffffff;
 }
 
 .inventory-table th {
