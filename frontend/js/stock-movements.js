@@ -8,7 +8,7 @@ function renderMovementsTable(data) {
   tableBody.innerHTML = "";
 
   if (!data.length) {
-    tableBody.innerHTML = `<tr><td colspan="8" class="empty">No stock movements found.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="empty">No stock movements found.</td></tr>`;
     return;
   }
 
@@ -23,7 +23,11 @@ function renderMovementsTable(data) {
 
     const qtyColor = isPositive ? "#16a34a" : "#dc2626";
     const qtyIcon = isPositive ? "fa-arrow-up" : "fa-arrow-down";
-    const status = movementType === "out" ? "completed" : movementType === "in" ? "pending" : "out-for-delivery";
+    // Stock movements are recorded after action is applied, so IN/OUT should be completed.
+    const status =
+      movementType === "out" || movementType === "in"
+        ? "completed"
+        : "pending";
 
     const row = `
       <tr>
@@ -37,7 +41,6 @@ function renderMovementsTable(data) {
           <i class="fas ${qtyIcon}"></i> ${isPositive ? "+" : "-"}${item.quantity}
         </td>
         <td style="font-weight:800;">₱${Number(item.selling_price || 0).toLocaleString("en-PH",{minimumFractionDigits:2})}</td>
-        <td>${item.reason || "-"}</td>
         <td><span class="status ${status}">${status}</span></td>
         <td>${new Date(item.moved_at).toLocaleString()}</td>
       </tr>

@@ -484,20 +484,20 @@ tbody tr:hover {
 
 /* Make Add/Edit Product container more compact */
 .product-form-card {
-  padding: 30px 14px 8px;
-  min-height: 128px;
+  padding: 16px 14px 12px;
+  min-height: auto;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .product-form-card .section-title {
-  margin-bottom: 6px;
+  margin-bottom: 10px;
   font-size: 1.05rem;
 }
 
 .product-form-card .form-grid {
-  gap: 20px;
+  gap: 10px;
   margin-top: 0;
 }
 
@@ -706,4 +706,47 @@ td {
   margin: 8px 0 0;
   color: #64748b;
   font-size: 1rem;
+}
+
+/* Procurement layout fixes */
+.procurement-form .full {
+  grid-column: 1 / -1;
+}
+
+#poItemsWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.po-item-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.po-item-row .po-remove-btn {
+  min-width: 92px;
+  height: 34px;
+}
+
+#createPoBtn {
+  height: 40px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* Hide empty status placeholders so no blank bar appears */
+.status:empty {
+  display: none;
+  padding: 0;
+  margin: 0;
+  min-height: 0;
+}
+
+@media (max-width: 1000px) {
+  .po-item-row {
+    grid-template-columns: 1fr;
+  }
 }

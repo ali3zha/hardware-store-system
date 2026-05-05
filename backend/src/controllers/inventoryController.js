@@ -83,6 +83,7 @@ exports.getProducts = async (req, res) => {
        FROM product p
        JOIN category c ON c.category_id = p.category_id
        JOIN supplier s ON s.supplier_id = p.supplier_id
+       WHERE p.status = 'active'
        ORDER BY p.product_id ASC`
     );
     res.json({ success: true, data: rows });
@@ -191,9 +192,21 @@ exports.deleteProduct = async (req, res) => {
     res.json({ success: true, message: "Product deleted successfully" });
   } catch (error) {
     if (error && error.code === "ER_ROW_IS_REFERENCED_2") {
-      return res.status(400).json({
-        success: false,
-        message: "Cannot delete product because it is already used in transactions",
+      // Product already used by sale_items/stock_movement: archive instead of hard delete.
+      const { id } = req.params;
+      const [archiveResult] = await pool.query(
+        "UPDATE product SET status = 'inactive' WHERE product_id = ?",
+        [id]
+      );
+
+      if (archiveResult.affectedRows === 0) {
+        return res.status(404).json({ success: false, message: "Product not found" });
+      }
+
+      return res.json({
+        success: true,
+        archived: true,
+        message: "Product is used in transactions, so it was archived (set to inactive) instead.",
       });
     }
     res.status(500).json({ success: false, message: error.message });

@@ -10,7 +10,8 @@
 
   function formatQty(type, qty) {
     const n = Number(qty || 0);
-    return type === "in" ? `+${n}` : `-${n}`;
+    const t = String(type || "").toLowerCase();
+    return t === "in" ? `+${n}` : `-${n}`;
   }
 
   function movementLabel(type) {
@@ -21,8 +22,7 @@
   }
 
   function movementClass(type) {
-    const t = String(type || "").toLowerCase();
-    return t === "in" ? "status-success" : "";
+    return "status-success";
   }
 
   async function loadDashboard() {
@@ -38,6 +38,9 @@
       const products = Array.isArray(productsRes.data) ? productsRes.data : [];
       const sales = Array.isArray(salesRes.data) ? salesRes.data : [];
       const movements = Array.isArray(movementsRes.data) ? movementsRes.data : [];
+      const productById = new Map(
+        products.map((p) => [Number(p.product_id), p])
+      );
 
       totalItemsEl.textContent = products.length.toLocaleString();
       lowStocksEl.textContent = products
@@ -52,12 +55,19 @@
           '<tr><td colspan="4" style="text-align:center;color:#64748b;">No stock updates yet.</td></tr>';
       } else {
         latest.forEach((m) => {
+          const product = productById.get(Number(m.product_id));
+          const categoryName =
+            String(m.category_name || "").trim() ||
+            String(product?.category_name || "").trim() ||
+            String(product?.category || "").trim() ||
+            "Uncategorized";
+
           latestStockBody.innerHTML += `
             <tr>
               <td>
                 <div><b>${m.product_name || `Product #${m.product_id}`}</b><br /><small>ID: #${m.product_id}</small></div>
               </td>
-              <td>${m.category_name || "-"}</td>
+              <td>${categoryName}</td>
               <td class="qty">${formatQty(m.type, m.quantity)}</td>
               <td><span class="status-tag ${movementClass(m.type)}">${movementLabel(m.type)}</span></td>
             </tr>

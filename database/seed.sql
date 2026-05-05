@@ -29,9 +29,10 @@ INSERT INTO customer (full_name, phone, email, loyalty_points) VALUES
 
 -- 5) DISCOUNT
 INSERT INTO discount (name, type, value, valid_from, valid_until, applies_to, status) VALUES
-('Grand Opening 10%', 'percent', 10.00, '2026-04-01', '2026-06-30', 'all', 'active'),
+('Grand Opening 10%', 'percentage', 10.00, '2026-04-01', '2026-06-30', 'all', 'active'),
 ('Loyalty 50 OFF', 'fixed', 50.00, '2026-04-01', '2026-12-31', 'all', 'active'),
-('Paint Promo 5%', 'percent', 5.00, '2026-05-01', '2026-05-31', 'category', 'active');
+('Paint Promo 5%', 'percentage', 5.00, '2026-05-01', '2026-05-31', 'category', 'active'),
+('PWD Discount', 'percentage', 20.00, '2026-01-01', '2026-12-31', 'all', 'active');
 
 -- 6) PRODUCT
 INSERT INTO product
@@ -66,10 +67,10 @@ VALUES
 (4, 2, 'OUT', 1, 'Sale transaction', NOW());
 
 -- 10) PURCHASE ORDER + ITEMS
-INSERT INTO purchase_orders
+INSERT INTO purchase_order
 (supplier_id, user_id, order_date, received_date, total_cost, status)
 VALUES
-(1, 3, CURDATE(), NULL, 0.00, 'pending');
+(1, 3, CURDATE(), NULL, 0.00, 'ordered');
 
 INSERT INTO purchase_order_items
 (po_id, product_id, qty_ordered, qty_received, unit_cost)

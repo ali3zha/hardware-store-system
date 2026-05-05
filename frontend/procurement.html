@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock Orders | NAILed IT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/fe1.css?v=20260505-2" />
+</head>
+<body>
+  <div class="sidebar">
+    <h2>NAILED<span>IT</span></h2>
+    <ul>
+      <li><a href="./index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+      <li><a href="./pos.html"><i class="fas fa-cash-register"></i> Go to POS</a></li>
+      <li><a href="./product.html"><i class="fas fa-tools"></i> Manage Products</a></li>
+      <li><a href="./procurement.html" class="active"><i class="fas fa-truck-ramp-box"></i> Stock Orders</a></li>
+      <li><a href="./category.html"><i class="fas fa-layer-group"></i> Category</a></li>
+      <li><a href="./transactions.html"><i class="fas fa-receipt"></i> View Transactions</a></li>
+      <li><a href="./stock-movements.html"><i class="fas fa-right-left"></i> View Stock Movements</a></li>
+      <li><a href="./login.html" id="logoutLink"><i class="fas fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+  </div>
+
+  <main class="main page">
+    <div class="page-header">
+      <h1>Stock Orders</h1>
+      <p>Create stock orders and confirm if items have arrived.</p>
+    </div>
+
+    <section class="card product-form-card">
+      <h3 class="section-title"><i class="fas fa-file-circle-plus"></i> Create Stock Order</h3>
+      <form id="poForm" class="form-grid procurement-form">
+        <select id="supplierId" required>
+          <option value="">Select Supplier</option>
+        </select>
+        <select id="createdByUserId" required>
+          <option value="">Created By (User)</option>
+        </select>
+        <button id="addItemBtn" type="button" class="btn-secondary">Add Item</button>
+        <div class="full" id="poItemsWrap"></div>
+      </form>
+      <p id="poFormStatus" class="status"></p>
+    </section>
+
+    <section class="table-wrap card">
+      <h3 class="section-title"><i class="fas fa-clipboard-list"></i> Stock Order Records</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>PO #</th>
+            <th>Supplier</th>
+            <th>Order Date</th>
+            <th>Status</th>
+            <th>Total Cost</th>
+            <th>Qty Progress</th>
+            <th>Tracking</th>
+          </tr>
+        </thead>
+        <tbody id="poTableBody"></tbody>
+      </table>
+      <p id="poTableStatus" class="status"></p>
+    </section>
+  </main>
+
+  <script src="./js/auth.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/procurement.js?v=20260505-3"></script>
+</body>
+</html>

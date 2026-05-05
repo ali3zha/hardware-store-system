@@ -9,6 +9,8 @@
   const discountText = document.getElementById("discountText");
   const taxText = document.getElementById("taxText");
   const totalText = document.getElementById("totalText");
+  const paymentMethodText = document.getElementById("paymentMethodText");
+  const paymentReferenceText = document.getElementById("paymentReferenceText");
   const tenderedText = document.getElementById("tenderedText");
   const changeText = document.getElementById("changeText");
   const approvalCodeText = document.getElementById("approvalCodeText");
@@ -31,6 +33,7 @@
       tenderedText.textContent = amountOnly(0);
       changeText.textContent = amountOnly(0);
       if (approvalCodeText) approvalCodeText.textContent = "#-";
+      if (paymentReferenceText) paymentReferenceText.textContent = "-";
       return;
     }
 
@@ -58,6 +61,10 @@
     discountText.textContent = amountOnly(receiptData.discount);
     taxText.textContent = amountOnly(receiptData.tax);
     totalText.textContent = amountOnly(receiptData.total);
+    if (paymentMethodText) paymentMethodText.textContent = paymentMethodLabel(receiptData.payment_method);
+    if (paymentReferenceText)
+      paymentReferenceText.textContent =
+        receiptData.payment_reference ? safeText(receiptData.payment_reference) : "-";
     tenderedText.textContent = amountOnly(receiptData.amount_tendered);
     changeText.textContent = amountOnly(receiptData.change);
     if (approvalCodeText) {
@@ -103,7 +110,23 @@
       total,
       amount_tendered: amountTendered,
       change,
+      payment_method: raw.payment_method ?? raw.paymentMethod ?? "cash",
+      payment_reference: raw.payment_reference ?? raw.paymentReference ?? null,
     };
+  }
+
+  function paymentMethodLabel(code) {
+    const map = {
+      cash: "Cash",
+      gcash: "GCash",
+      card: "Card",
+      bank_transfer: "Bank transfer",
+    };
+    const key = String(code ?? "cash")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "_");
+    return map[key] ?? (code ? String(code) : "Cash");
   }
 
   function parseJSON(value) {
